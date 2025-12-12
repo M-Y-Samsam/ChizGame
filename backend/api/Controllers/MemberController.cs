@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace api.Controllers;
 
+[Authorize]
 public class MemberController(IMemberRepository memberRepository) : BaseApiController
 {
     [HttpGet]
@@ -27,7 +30,7 @@ public class MemberController(IMemberRepository memberRepository) : BaseApiContr
     {
         MemberDto? memberDto = await memberRepository.GetGamerByName(userInput, cancellationToken);
 
-        if (memberDto is null) return BadRequest("gamer not foun!");
+        if (memberDto is null) return BadRequest("gamer not found!");
 
         return Ok(memberDto);
     }

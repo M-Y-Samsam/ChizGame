@@ -1,15 +1,21 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace api.Repositories
 {
+    [AllowAnonymous]
     public class AccountRepository : IAccountRepository
     {
         #region Mongodb
         private readonly IMongoCollection<Gamer> _collection;
+        private readonly ITokenService _tokenService;
 
         // Dependency Injection
-        public AccountRepository(IMongoClient client, IMongoDbSettings dbSettings)
+        public AccountRepository(IMongoClient client, IMongoDbSettings dbSettings, ITokenService tokenService)
         {
             var dbName = client.GetDatabase(dbSettings.DatabaseName);
             _collection = dbName.GetCollection<Gamer>("gamers");
+
+            _tokenService = tokenService;
         }
         #endregion
 
@@ -22,7 +28,9 @@ namespace api.Repositories
 
             await _collection.InsertOneAsync(userInput, null, cancellationToken);
 
-            return Mappers.ConvertGamerToLoggedInDto(userInput);
+            string? token = _tokenService.CreateToken(userInput);
+
+            return Mappers.ConvertGamerToLoggedInDto(userInput, token);
         }
 
         public async Task<LoggedInDto?> LogInAsync(LogInDto userInput, CancellationToken cancellationToken)
@@ -32,16 +40,19 @@ namespace api.Repositories
             if (gamer is null)
                 return null;
 
-            return Mappers.ConvertGamerToLoggedInDto(gamer);
+            string? token = _tokenService.CreateToken(gamer);
+
+            return Mappers.ConvertGamerToLoggedInDto(gamer, token);
         }
 
+        [Authorize]
         public async Task<DeleteResult?> DeleteResultAsync(string userId, CancellationToken cancellationToken)
         {
-            Gamer gamer = await _collection.Find<Gamer>(doc => doc.id == userId).FirstOrDefaultAsync(cancellationToken);
+            Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
 
             if (gamer is null) return null;
 
-            return await _collection.DeleteOneAsync<Gamer>(doc => doc.id == userId, cancellationToken);
+            return await _collection.DeleteOneAsync<Gamer>(doc => doc.Id == userId, cancellationToken);
         }
     }
 }

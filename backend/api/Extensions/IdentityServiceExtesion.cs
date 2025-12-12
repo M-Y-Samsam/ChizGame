@@ -1,12 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
-namespace api.Extensions
+namespace api.Extensions;
+
+public static class IdentityServiceExtesion
 {
-    public class IdentityServiceExtesion
+    public static IServiceCollection AddIdentityService(this IServiceCollection services, IConfiguration configuration)
     {
-        
+        #region Authentication & Authorization
+
+        string tokenValue = configuration["TokenKey"]!;
+
+        if (!string.IsNullOrEmpty(tokenValue))
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenValue)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+        }
+
+        #endregion Authentication & Authorization
+
+        return services;
     }
 }
