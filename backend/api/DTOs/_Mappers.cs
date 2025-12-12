@@ -7,7 +7,7 @@ public static class Mappers
         return new (
             Email: gamer.Email,
             Name: gamer.Name,
-            Age: gamer.Age,
+            Age: DateTimeExtension.CalculateAge(gamer.DateOfBirth),
             Token: tokenValue
         );
     }
@@ -17,7 +17,7 @@ public static class Mappers
         return new (
             Email: gamer.Email,
             Name: gamer.Name,
-            Age: gamer.Age,
+            Age: DateTimeExtension.CalculateAge(gamer.DateOfBirth),
             Gender: gamer.Gender,
             City: gamer.City,
             Country: gamer.Country
