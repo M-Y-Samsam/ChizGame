@@ -1,9 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace api.Controllers;
 public class UserController(IUserRepository userRepository) : BaseApiController
 {
-    [HttpPut("update/{userId}")]
-    public async Task<ActionResult<LoggedInDto>> UpdateById(string userId , Gamer userInput , CancellationToken cancellationToken)
+    [Authorize]
+    [HttpPut("update/")]
+    public async Task<ActionResult<LoggedInDto>> UpdateById(Gamer userInput , CancellationToken cancellationToken)
     {
+        var userId = User.GetUserId();
+
+        if (userId is null) return Unauthorized("you are not login. Please login again");
+
         LoggedInDto? loggedInDto = await userRepository.UpdateResultAsync(userId,userInput, cancellationToken);
 
         if (loggedInDto is null) return BadRequest("Operation failed.");

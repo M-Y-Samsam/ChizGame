@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
-namespace api.Extensions
+namespace api.Extensions;
+
+public static class ClaimPrincipalExtension
 {
-    public class ClaimPrincipalExtension
+    public static string? GetUserId(this ClaimsPrincipal usser)
     {
-        
+        return usser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     }
 }

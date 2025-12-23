@@ -8,6 +8,11 @@ public class MemberController(IMemberRepository memberRepository) : BaseApiContr
     [HttpGet]
     public async Task<ActionResult<List<MemberDto>>> GetAllGamers(CancellationToken cancellationToken)
     {
+        var userId = User.GetUserId();
+
+        if (userId is null)
+            return Unauthorized("You are not login. Please login again");
+
         List<Gamer>? gamers = await memberRepository.GetGamersAsync(cancellationToken);
 
         if (gamers is null)
@@ -21,11 +26,11 @@ public class MemberController(IMemberRepository memberRepository) : BaseApiContr
 
             members.Add(member);
         }
-        
+
         return members;
     }
 
-    [HttpGet("get-gamer-by-name/{userInput}")]
+    [HttpGet("get-by-name/{userInput}")]
     public async Task<ActionResult<MemberDto>> GetGamerByName(string userInput, CancellationToken cancellationToken)
     {
         MemberDto? memberDto = await memberRepository.GetGamerByName(userInput, cancellationToken);
