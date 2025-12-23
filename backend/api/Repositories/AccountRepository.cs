@@ -54,5 +54,14 @@ namespace api.Repositories
 
             return await _collection.DeleteOneAsync<Gamer>(doc => doc.Id == userId, cancellationToken);
         }
+
+        public async Task<LoggedInDto?> ReloadLoggedInAsync(string userId, string Token, CancellationToken cancellationToken)
+        {
+            Gamer? gamer = await _collection.Find(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
+
+            if (gamer is null) return null;
+
+            return Mappers.ConvertGamerToLoggedInDto(gamer, Token);
+        }
     }
 }
