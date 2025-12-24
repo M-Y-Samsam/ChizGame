@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     }
     #endregion
 
-    public async Task<LoggedInDto?> UpdateResultAsync(string userId, Gamer userInput, CancellationToken cancellationToken)
+    public async Task<MemberDto?> UpdateResultAsync(string userId, Gamer userInput, CancellationToken cancellationToken)
     {
         Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
 
@@ -35,8 +35,6 @@ public class UserRepository : IUserRepository
 
         if (user is null) return null;
 
-        string? token = _tokenService.CreateToken(user);
-
-        return Mappers.ConvertGamerToLoggedInDto(user, token);
+        return Mappers.ConvertGamerToMemberDto(user);
     }
 }
