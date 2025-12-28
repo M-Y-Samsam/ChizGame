@@ -2,6 +2,20 @@ namespace api.DTOs;
 
 public static class Mappers
 {
+    public static Gamer ConvertRegisterDtoToGamer(RegisterDto registerDto)
+    {
+        Gamer gamer = new Gamer()
+        {
+            Name = registerDto.Name,
+            Email = registerDto.Email,
+            Password = registerDto.Password,
+            ConfirmPassword = registerDto.ConfirmPassword,
+            DateOfBirth = registerDto.DateOfBirth,          
+        };
+
+        return gamer;
+    }
+
     public static LoggedInDto ConvertGamerToLoggedInDto(Gamer gamer, string tokenValue)
     {
         return new (
