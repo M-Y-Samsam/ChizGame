@@ -5,7 +5,7 @@ namespace api.Controllers;
 public class AccountController(IAccountRepository accountRepository) : BaseApiController
 {
     [HttpPost("register")]
-    public async Task<ActionResult<LoggedInDto>> Rgister(Gamer userInput, CancellationToken cancellationToken)
+    public async Task<ActionResult<LoggedInDto>> Rgister(RegisterDto userInput, CancellationToken cancellationToken)
     {
         if (userInput.Password != userInput.ConfirmPassword)
             return BadRequest("password and confirm Password not match");

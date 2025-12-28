@@ -19,18 +19,20 @@ namespace api.Repositories
         }
         #endregion
 
-        public async Task<LoggedInDto?> RegisterAsync(Gamer userInput, CancellationToken cancellationToken)
+        public async Task<LoggedInDto?> RegisterAsync(RegisterDto userInput, CancellationToken cancellationToken)
         {
             Gamer? user = await _collection.Find<Gamer>(doc => doc.Email == userInput.Email).FirstOrDefaultAsync(cancellationToken);
 
             if (user is not null)
                 return null;
 
-            await _collection.InsertOneAsync(userInput, null, cancellationToken);
+            Gamer gamer = Mappers.ConvertRegisterDtoToGamer(userInput);
 
-            string? token = _tokenService.CreateToken(userInput);
+            await _collection.InsertOneAsync(gamer, null, cancellationToken);
 
-            return Mappers.ConvertGamerToLoggedInDto(userInput, token);
+            string? token = _tokenService.CreateToken(gamer);
+
+            return Mappers.ConvertGamerToLoggedInDto(gamer, token);
         }
 
         public async Task<LoggedInDto?> LogInAsync(LogInDto userInput, CancellationToken cancellationToken)
