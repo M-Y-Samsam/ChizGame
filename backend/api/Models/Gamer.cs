@@ -12,5 +12,5 @@ public class Gamer
     public string Gender { get; init; } = string.Empty;
     public string Country { get; init; } = string.Empty;
     public string City { get; init; } = string.Empty;
-    public List<Photo> Photos { get; init;} = [];
+    public Photo Photo { get; init;} 
 }
