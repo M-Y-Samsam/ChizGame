@@ -6,14 +6,14 @@ namespace api.Controllers;
 public class MemberController(IMemberRepository memberRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<List<MemberDto>>> GetAllGamers(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetAllGamers(CancellationToken cancellationToken)
     {
         var userId = User.GetUserId();
 
         if (userId is null)
             return Unauthorized("You are not login. Please login again");
 
-        List<Gamer>? gamers = await memberRepository.GetGamersAsync(cancellationToken);
+        IEnumerable<Gamer>? gamers = await memberRepository.GetGamersAsync(cancellationToken);
 
         if (gamers is null)
             return NoContent();

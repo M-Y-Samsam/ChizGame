@@ -15,11 +15,11 @@ public class MemberRepository : IMemberRepository
     }
     #endregion
 
-    public async Task<List<Gamer>?> GetGamersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Gamer>?> GetGamersAsync(CancellationToken cancellationToken)
     {
-        List<Gamer>? gamers = await _collection.Find<Gamer>(new BsonDocument()).ToListAsync(cancellationToken);
+        IEnumerable<Gamer>? gamers = await _collection.Find<Gamer>(new BsonDocument()).ToListAsync(cancellationToken);
 
-        if (gamers is null)
+        if (gamers.Any())
             return null;
 
         return gamers;
