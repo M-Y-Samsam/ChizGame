@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Repositories;
@@ -82,19 +83,19 @@ public class UserRepository : IUserRepository
 
     public async Task<Photo?> JustUploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
     {
-        Gamer? gamer1 = await GetByIdAsync(userId, cancellationToken);
+        Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
-        if (gamer1 is null) return null;
+        if (gamer is null) return null;
 
-        ObjectId objectId1 = ObjectId.Parse(userId);
+        ObjectId.TryParse(userId, out var objectId);
 
-        string[]? imageUrls1 = await _photoService.AddPhotoToDiskAsync(file, objectId1);
+        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, objectId);
 
-        if (imageUrls1 is not null)
+        if (imageUrls is not null)
         {
             Photo newPhoto;
 
-            newPhoto = Mappers.ConvertPhotoUrlsToPhoto(imageUrls1, true);
+            newPhoto = Mappers.ConvertPhotoUrlsToPhoto(imageUrls, true);
 
             UpdateDefinition<Gamer> updateUser = Builders<Gamer>.Update.Set(doc => doc.Photo, newPhoto);
 
@@ -104,5 +105,29 @@ public class UserRepository : IUserRepository
         }
 
         return null;
+    }
+
+    public async Task<MemberDto?> RemovePhotoAsync(string userId, CancellationToken cancellationToken)
+    {
+        Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
+
+        if ( gamer is null) return null;
+
+        Photo? photo = gamer.Photo;
+        
+        if ( photo is null) return null;
+
+        bool isDeleteSuccess = await _photoService.DeletePhotoFromDisk(photo);
+        if ( !isDeleteSuccess ) return null;
+
+        UpdateDefinition<Gamer> update = Builders<Gamer>.Update.Inc(gamer => gamer.Photo , photo );
+
+        await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id!.ToString() == userId , update, null , cancellationToken);
+
+        Gamer user = await _collection.Find( doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
+
+        if ( user is null ) return null;
+
+        return Mappers.ConvertGamerToMemberDto(user);
     }
 }

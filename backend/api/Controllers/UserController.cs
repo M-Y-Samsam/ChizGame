@@ -33,4 +33,18 @@ public class UserController(IUserRepository userRepository) : BaseApiController
 
         return photo is null ? BadRequest("Add photo failed.") : photo ;
     }
+
+    [HttpDelete("delete-photo")]
+    public async Task<ActionResult<MemberDto>> DeletePhoto( CancellationToken cancellationToken)
+    {
+        string? userId = User.GetUserId();
+
+        if ( userId is null ) return BadRequest("you are not logged in. please log in again");
+
+        MemberDto? memberDto = await userRepository.RemovePhotoAsync(userId, cancellationToken);
+
+        if (memberDto is null) return BadRequest("operation failed.");
+
+        return Ok(memberDto);
+    }
 }
