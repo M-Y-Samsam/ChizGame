@@ -47,7 +47,7 @@ public class UserRepository : IUserRepository
         return Mappers.ConvertGamerToMemberDto(user);
     }
 
-    public async Task<Photo?> UploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
+    public async Task<Photo?> FullUploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
     {
         Gamer? user = await GetByIdAsync(userId, cancellationToken);
 
@@ -57,44 +57,44 @@ public class UserRepository : IUserRepository
 
         if (oldPhoto is null)
         {
-            Gamer? gamer1 = await GetByIdAsync(userId, cancellationToken);
-
-            if (gamer1 is null) return null;
-
-            ObjectId objectId1 = ObjectId.Parse(userId);
-
-            string[]? imageUrls1 = await _photoService.AddPhotoToDiskAsync(file, objectId1);
-
-            if (imageUrls1 is not null)
-            {
-                Photo newPhoto;
-
-                newPhoto = Mappers.ConvertPhotoUrlsToPhoto(imageUrls1, true);
-
-                UpdateDefinition<Gamer> updateUser = Builders<Gamer>.Update.Set(doc => doc.Photo, newPhoto);
-
-                UpdateResult result = await _collection.UpdateOneAsync(doc => doc.Id == userId, updateUser, null, cancellationToken);
-
-                return result.ModifiedCount == 1 ? newPhoto : null;
-            }
-
-            return null;
+            return await JustUploadPhotoAsync(file, userId, cancellationToken);
         }
 
+        bool isDeleteSuccess = await DeletePhotoAsync(userId, cancellationToken);
+        if (isDeleteSuccess is false) return null;
+
+
+        return await JustUploadPhotoAsync(file, userId, cancellationToken);
+    }
+
+    public async Task<bool> DeletePhotoAsync(string userId, CancellationToken cancellationToken)
+    {
+        Gamer? user = await GetByIdAsync(userId, cancellationToken);
+
+        if (user is null) return false;
+
+        Photo oldPhoto = user.Photo;
+
         bool isDeleteSuccess = await _photoService.DeletePhotoFromDisk(oldPhoto);
-        if (!isDeleteSuccess) return null;
 
-        if (user is null) return null;
+        return isDeleteSuccess;
+    }
 
-        ObjectId objectId = ObjectId.Parse(userId);
+    public async Task<Photo?> JustUploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
+    {
+        Gamer? gamer1 = await GetByIdAsync(userId, cancellationToken);
 
-        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, objectId);
+        if (gamer1 is null) return null;
 
-        if (imageUrls is not null)
+        ObjectId objectId1 = ObjectId.Parse(userId);
+
+        string[]? imageUrls1 = await _photoService.AddPhotoToDiskAsync(file, objectId1);
+
+        if (imageUrls1 is not null)
         {
             Photo newPhoto;
 
-            newPhoto = Mappers.ConvertPhotoUrlsToPhoto(imageUrls, true);
+            newPhoto = Mappers.ConvertPhotoUrlsToPhoto(imageUrls1, true);
 
             UpdateDefinition<Gamer> updateUser = Builders<Gamer>.Update.Set(doc => doc.Photo, newPhoto);
 

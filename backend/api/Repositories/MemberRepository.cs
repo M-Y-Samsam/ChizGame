@@ -1,4 +1,6 @@
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace api.Repositories;
 
 public class MemberRepository : IMemberRepository

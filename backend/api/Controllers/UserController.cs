@@ -29,7 +29,7 @@ public class UserController(IUserRepository userRepository) : BaseApiController
 
         if ( userId is null) return BadRequest("you are not logged in. please log in agaon");
 
-        Photo? photo = await userRepository.UploadPhotoAsync(file, userId, cancellationToken);
+        Photo? photo = await userRepository.FullUploadPhotoAsync(file, userId, cancellationToken);
 
         return photo is null ? BadRequest("Add photo failed.") : photo ;
     }
