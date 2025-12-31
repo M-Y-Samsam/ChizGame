@@ -54,7 +54,7 @@ public class UserRepository : IUserRepository
 
         if (gamer is null) return null;
 
-        ObjectId objectId = ObjectId.Parse(userId);
+        if(!ObjectId.TryParse(userId, out var objectId)) return null;
 
         string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, gamer.Photo, objectId);
 
