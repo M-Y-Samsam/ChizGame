@@ -48,48 +48,15 @@ public class UserRepository : IUserRepository
         return Mappers.ConvertGamerToMemberDto(user);
     }
 
-    public async Task<Photo?> FullUploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
-    {
-        Gamer? user = await GetByIdAsync(userId, cancellationToken);
-
-        if (user is null) return null;
-
-        Photo oldPhoto = user.Photo;
-
-        if (oldPhoto is null)
-        {
-            return await JustUploadPhotoAsync(file, userId, cancellationToken);
-        }
-
-        bool isDeleteSuccess = await DeletePhotoAsync(userId, cancellationToken);
-        if (isDeleteSuccess is false) return null;
-
-
-        return await JustUploadPhotoAsync(file, userId, cancellationToken);
-    }
-
-    public async Task<bool> DeletePhotoAsync(string userId, CancellationToken cancellationToken)
-    {
-        Gamer? user = await GetByIdAsync(userId, cancellationToken);
-
-        if (user is null) return false;
-
-        Photo oldPhoto = user.Photo;
-
-        bool isDeleteSuccess = await _photoService.DeletePhotoFromDisk(oldPhoto);
-
-        return isDeleteSuccess;
-    }
-
-    public async Task<Photo?> JustUploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
+    public async Task<Photo?> UploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
     {
         Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
         if (gamer is null) return null;
 
-        ObjectId.TryParse(userId, out var objectId);
+        ObjectId objectId = ObjectId.Parse(userId);
 
-        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, objectId);
+        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, gamer.Photo, objectId);
 
         if (imageUrls is not null)
         {
@@ -106,10 +73,10 @@ public class UserRepository : IUserRepository
 
         return null;
     }
-
-    public async Task<MemberDto?> RemovePhotoAsync(string userId, CancellationToken cancellationToken)
+    
+    public async Task<MemberDto?> DeleltePhotoAsync(string userId, CancellationToken cancellationToken)
     {
-        Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
+       Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
         if ( gamer is null) return null;
 
@@ -120,7 +87,7 @@ public class UserRepository : IUserRepository
         bool isDeleteSuccess = await _photoService.DeletePhotoFromDisk(photo);
         if ( !isDeleteSuccess ) return null;
 
-        UpdateDefinition<Gamer> update = Builders<Gamer>.Update.Inc(gamer => gamer.Photo , photo );
+        UpdateDefinition<Gamer> update = Builders<Gamer>.Update.Unset(gamer => gamer.Photo );
 
         await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id!.ToString() == userId , update, null , cancellationToken);
 

@@ -23,25 +23,25 @@ public class UserController(IUserRepository userRepository) : BaseApiController
     [HttpPut("upload-photo")]
     public async Task<ActionResult<Photo>> UploadPhoto([AllowedFileExtensions, FileSize(50_000, 4_000_000)] IFormFile file, CancellationToken cancellationToken)
     {
-        if ( file is null) return BadRequest("no file selcted for this request");
+        if (file is null) return BadRequest("no file selcted for this request");
 
         string? userId = User.GetUserId();
 
-        if ( userId is null) return BadRequest("you are not logged in. please log in agaon");
+        if (userId is null) return BadRequest("you are not logged in. please log in agaon");
 
-        Photo? photo = await userRepository.FullUploadPhotoAsync(file, userId, cancellationToken);
+        Photo? photo = await userRepository.UploadPhotoAsync(file, userId, cancellationToken);
 
-        return photo is null ? BadRequest("Add photo failed.") : photo ;
+        return photo is null ? BadRequest("Add photo failed.") : photo;
     }
 
     [HttpDelete("delete-photo")]
-    public async Task<ActionResult<MemberDto>> DeletePhoto( CancellationToken cancellationToken)
+    public async Task<ActionResult<MemberDto>> DeletePhoto(CancellationToken cancellationToken)
     {
         string? userId = User.GetUserId();
 
-        if ( userId is null ) return BadRequest("you are not logged in. please log in again");
+        if (userId is null) return BadRequest("you are not logged in. please log in again");
 
-        MemberDto? memberDto = await userRepository.RemovePhotoAsync(userId, cancellationToken);
+        MemberDto? memberDto = await userRepository.DeleltePhotoAsync(userId, cancellationToken);
 
         if (memberDto is null) return BadRequest("operation failed.");
 
