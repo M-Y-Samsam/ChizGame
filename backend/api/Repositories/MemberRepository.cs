@@ -15,12 +15,9 @@ public class MemberRepository : IMemberRepository
     }
     #endregion
 
-    public async Task<IEnumerable<Gamer>?> GetGamersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Gamer>> GetGamersAsync(CancellationToken cancellationToken)
     {
-        IEnumerable<Gamer>? gamers = await _collection.Find<Gamer>(new BsonDocument()).ToListAsync(cancellationToken);
-
-        if (gamers.Any())
-            return null;
+        IEnumerable<Gamer> gamers = await _collection.Find<Gamer>(new BsonDocument()).ToListAsync(cancellationToken);
 
         return gamers;
     }

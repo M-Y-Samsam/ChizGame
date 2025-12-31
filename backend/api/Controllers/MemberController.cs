@@ -13,9 +13,9 @@ public class MemberController(IMemberRepository memberRepository) : BaseApiContr
         if (userId is null)
             return Unauthorized("You are not login. Please login again");
 
-        IEnumerable<Gamer>? gamers = await memberRepository.GetGamersAsync(cancellationToken);
+        IEnumerable<Gamer> gamers = await memberRepository.GetGamersAsync(cancellationToken);
 
-        if (gamers is null)
+        if (!gamers.Any())
             return NoContent();
 
         List<MemberDto>? members = [];
