@@ -9,14 +9,16 @@ public class UserRepository : IUserRepository
     private readonly IMongoCollection<Gamer> _collection;
     private readonly ITokenService _tokenService;
     private readonly IPhotoService _photoService;
+    private readonly ILogger<UserRepository> _logger;
 
-    public UserRepository(IMongoClient client, IMongoDbSettings dbSettings, ITokenService tokenService, IPhotoService photoService)
+    public UserRepository(IMongoClient client, IMongoDbSettings dbSettings, ITokenService tokenService, IPhotoService photoService, ILogger<UserRepository> logger)
     {
         var dbName = client.GetDatabase(dbSettings.DatabaseName);
         _collection = dbName.GetCollection<Gamer>("gamers");
 
         _tokenService = tokenService;
         _photoService = photoService;
+        _logger = logger;
     }
 
     public async Task<Gamer?> GetByIdAsync(string userId, CancellationToken cancellationToken)
@@ -74,7 +76,7 @@ public class UserRepository : IUserRepository
         return null;
     }
     
-    public async Task<MemberDto?> DeleltePhotoAsync(string userId, CancellationToken cancellationToken)
+    public async Task<UpdateResult?> DeleltePhotoAsync(string userId, CancellationToken cancellationToken)
     {
        Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
@@ -89,12 +91,6 @@ public class UserRepository : IUserRepository
 
         UpdateDefinition<Gamer> update = Builders<Gamer>.Update.Unset(gamer => gamer.Photo );
 
-        await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id!.ToString() == userId , update, null , cancellationToken);
-
-        Gamer user = await _collection.Find( doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
-
-        if ( user is null ) return null;
-
-        return Mappers.ConvertGamerToMemberDto(user);
+        return await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id!.ToString() == userId , update, null , cancellationToken);
     }
 }
