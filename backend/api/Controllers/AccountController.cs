@@ -24,7 +24,7 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
         LoggedInDto? loggedInDto = await accountRepository.LogInAsync(userInput, cancellationToken);
 
         if (loggedInDto is null)
-            return BadRequest("Email or Password is wrong!");
+            return BadRequest("Name or Password is wrong!");
 
         return Ok(loggedInDto);
     }

@@ -23,13 +23,13 @@ public static class Mappers
             Name: gamer.Name,
             Age: DateTimeExtension.CalculateAge(gamer.DateOfBirth),
             Token: tokenValue
+            // ProfilePhotoUrl: gamer.Photo.Url_165
         );
     }
 
     public static MemberDto ConvertGamerToMemberDto(Gamer gamer)
     {
         return new (
-            Email: gamer.Email,
             Name: gamer.Name,
             Age: DateTimeExtension.CalculateAge(gamer.DateOfBirth),
             Gender: gamer.Gender,

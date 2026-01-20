@@ -37,7 +37,7 @@ namespace api.Repositories
 
         public async Task<LoggedInDto?> LogInAsync(LogInDto userInput, CancellationToken cancellationToken)
         {
-            Gamer? gamer = await _collection.Find(doc => doc.Email == userInput.Email && doc.Password == userInput.Password).FirstOrDefaultAsync(cancellationToken);
+            Gamer? gamer = await _collection.Find(doc => doc.Name == userInput.Name && doc.Password == userInput.Password).FirstOrDefaultAsync(cancellationToken);
 
             if (gamer is null)
                 return null;
