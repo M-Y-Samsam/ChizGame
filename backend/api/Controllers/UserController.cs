@@ -7,17 +7,17 @@ namespace api.Controllers;
 public class UserController(IUserRepository userRepository) : BaseApiController
 {
     [HttpPut("update/")]
-    public async Task<ActionResult<MemberDto>> UpdateById(Gamer userInput, CancellationToken cancellationToken)
+    public async Task<ActionResult<Response>> UpdateById(UserUpdateDto userInput, CancellationToken cancellationToken)
     {
         var userId = User.GetUserId();
 
         if (userId is null) return Unauthorized("you are not login. Please login again");
 
-        MemberDto? memberDto = await userRepository.UpdateResultAsync(userId, userInput, cancellationToken);
+        UpdateResult? result = await userRepository.UpdateResultAsync(userId, userInput, cancellationToken);
 
-        if (memberDto is null) return BadRequest("Operation failed.");
-
-        return Ok(memberDto);
+        return result is null || result.ModifiedCount == 0
+        ? BadRequest("Update failed, Try again later")
+        : Ok(new Response( Message: "User has been updated successfully"));
     }
 
     [HttpPut("upload-photo")]

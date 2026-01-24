@@ -6,8 +6,8 @@ public static class Mappers
     {
         Gamer gamer = new Gamer()
         {
-            Name = registerDto.Name,
-            Email = registerDto.Email,
+            Name = registerDto.Name.Trim().ToLower(),
+            Email = registerDto.Email.Trim().ToLower(),
             Password = registerDto.Password,
             ConfirmPassword = registerDto.ConfirmPassword,
             DateOfBirth = registerDto.DateOfBirth,          
@@ -34,7 +34,8 @@ public static class Mappers
             Age: DateTimeExtension.CalculateAge(gamer.DateOfBirth),
             Gender: gamer.Gender,
             City: gamer.City,
-            Country: gamer.Country
+            Country: gamer.Country,
+            FavoriteGames: gamer.FavoriteGames
         );
     }
 

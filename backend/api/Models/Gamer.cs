@@ -13,4 +13,5 @@ public class Gamer
     public string Country { get; init; } = string.Empty;
     public string City { get; init; } = string.Empty;
     public Photo Photo { get; init;} 
+    public List<string> FavoriteGames { get; init;} = string.Empty;
 }

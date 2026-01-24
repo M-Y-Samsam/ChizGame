@@ -29,7 +29,7 @@ public class UserRepository : IUserRepository
 
         return gamer;
     }
-    public async Task<MemberDto?> UpdateResultAsync(string userId, Gamer userInput, CancellationToken cancellationToken)
+    public async Task<UpdateResult?> UpdateResultAsync(string userId, UserUpdateDto userInput, CancellationToken cancellationToken)
     {
         Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
 
@@ -37,17 +37,11 @@ public class UserRepository : IUserRepository
 
         UpdateDefinition<Gamer> updateDef = Builders<Gamer>.Update
         .Set(user => user.Email, userInput.Email.Trim().ToLower())
-        .Set(user => user.Name, userInput.Name)
-        .Set(user => user.Country, userInput.Country)
-        .Set(user => user.City, userInput.City);
+        .Set(user => user.Name, userInput.Name.Trim())
+        .Set(user => user.Country, userInput.Country.Trim())
+        .Set(user => user.City, userInput.City.Trim());
 
-        await _collection.UpdateOneAsync(user => user.Id == userId, updateDef, null, cancellationToken);
-
-        Gamer user = await _collection.Find<Gamer>(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
-
-        if (user is null) return null;
-
-        return Mappers.ConvertGamerToMemberDto(user);
+        return await _collection.UpdateOneAsync(user => user.Id == userId, updateDef, null, cancellationToken);
     }
 
     public async Task<Photo?> UploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)

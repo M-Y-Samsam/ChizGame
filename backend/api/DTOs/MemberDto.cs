@@ -5,5 +5,6 @@ public record MemberDto(
     int Age,
     string Gender,
     string City,
-    string Country
+    string Country,
+    List<string> FavoriteGames
 );
