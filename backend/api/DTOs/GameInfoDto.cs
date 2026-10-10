@@ -16,7 +16,7 @@ public record GameInfoDto(
     string Developer,
     string Publisher,
     DateOnly ReleaseDate,
-    MinAgeRange MinimumAge,
+    GameAgeRange MinimumAge,
     List<Platforms> Platforms,
     GameRequirement MinimumRequirement,
     GameRequirement MaximumRequirement,

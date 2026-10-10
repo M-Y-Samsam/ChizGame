@@ -17,6 +17,8 @@ public class Games
     public int CompletionistHours { get; init; }
     public bool IsGamePlayableAfterEnding { get; init; }
 
+    public int CriticRating { get; init; }
+
     public GamePhoto CoverImage { get; init; } = null!; // the image that is in get all games page
     public GamePhoto BannerImage { get; init; } = null!; // main image in game page
     public GamePhoto LogoImage { get; init; } = null!;
@@ -29,7 +31,7 @@ public class Games
     public string Developer { get; init; } = string.Empty; // Game Compony
     public string Publisher { get; init; } = string.Empty; // Game Publisher
     public DateOnly ReleaseDate { get; init; } // Date of Releasing Game
-    public MinAgeRange MinimumAge { get; init; } // gmae minimum age 
+    public GameAgeRange MinimumAge { get; init; } // gmae minimum age 
 
     public List<Platforms> Platforms { get; init; } = []; // Platforms supported by this game
 

@@ -1,6 +1,6 @@
 namespace api.Enums;
 
-public enum MinAgeRange
+public enum GameAgeRange
 {
     PGEI3 = 3,
     PGEI7 = 7,

@@ -11,6 +11,8 @@ public class GameParams : PaginationParams
     public string? Search { get; set; } = string.Empty;
     public List<GameTags> GameTags { get; set; } = [];
     public List<Platforms> Platforms { get; set; } = [];
-    public MinAgeRange MinAge { get; set; }
+    public GameAgeRange MinAge { get; set; }
+    public GameAgeRange MaxAge { get; set; }
     public int? MinSize { get; set; }
+    public int? MaxSize { get; set; }
 }
