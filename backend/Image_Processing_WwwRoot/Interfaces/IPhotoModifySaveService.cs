@@ -1,3 +1,4 @@
+using Image_Processing_WwwRoot.Helpers;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 
@@ -5,11 +6,11 @@ namespace Image_Processing_WwwRoot.Interfaces;
 
 public interface IPhotoModifySaveService
 {
-    public Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex);
-    public Task<string> ResizeByPixel(IFormFile formFile, ObjectId userId, int widthIn, int heightIn);
-    public Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int side);
-    public Task<string> Crop(IFormFile formFile, ObjectId userId, int widthIn, int heightIn);
-    public Task<string> Crop_Square(IFormFile formFile, ObjectId userId, int side);
-    public Task<string> CropWithOriginalSide_Square(IFormFile formFile, ObjectId userId);
+    public Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex, PhotoCategory photoCategory);
+    public Task<string> ResizeByPixel(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory, PhotoType photoType);
+    public Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int side, PhotoCategory photoCategory);
+    public Task<string> Crop(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory);
+    public Task<string> Crop_Square(IFormFile formFile, ObjectId userId, int side, PhotoCategory photoCategory);
+    public Task<string> CropWithOriginalSide_Square(IFormFile formFile, ObjectId userId, PhotoCategory photoCategory);
     public Task<string> SaveImageAsIs(IFormFile formFile, ObjectId userId, int operation);
 }

@@ -11,8 +11,10 @@ public static class RepositoryServiceExtension
         services.AddScoped<IMemberRepository, MemberRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IPhotoModifySaveService, PhotoModifySaveService>();
+        services.AddScoped<IGameRepository,GameRepository>();
         services.AddScoped<IPhotoService, PhotoService>();
+        services.AddScoped<IPhotoModifySaveService, PhotoModifySaveService>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
         
         return services;
     }

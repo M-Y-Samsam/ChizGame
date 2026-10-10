@@ -1,3 +1,4 @@
+using api.Enums;
 using Image_Processing_WwwRoot.Helpers;
 using Image_Processing_WwwRoot.Interfaces;
 
@@ -26,6 +27,8 @@ public class PhotoService(
     /// <param name="formFile"></param>
     /// <param name="userId"></param>
     /// <returns>ADD: array of filePaths. DELETE: boolean</returns>
+
+    #region UserProfile
     public async Task<string[]?> AddPhotoToDiskAsync(IFormFile formFile, Photo photo, ObjectId userId)
     {
         if (photo is not null)
@@ -44,9 +47,9 @@ public class PhotoService(
             // await _photoModifyService.ResizeByPixel_Square(formFile, userId, 500);
             // await _photoModifyService.ResizeImageByScale(formFile, userId);
 
-            string filePath_165_sq = await _photoModifyService.ResizeByPixel_Square(formFile, userId, 165); // navbar & thumbnail
-            string filePath_256_sq = await _photoModifyService.ResizeByPixel_Square(formFile, userId, 256); // card
-            string filePath_enlarged = await _photoModifyService.ResizeImageByScale(formFile, userId, (int)DimensionsEnum._4_3_800x600); // enlarged photo
+            string filePath_165_sq = await _photoModifyService.ResizeByPixel_Square(formFile, userId, 165, PhotoCategory.UserProfile); // navbar & thumbnail
+            string filePath_256_sq = await _photoModifyService.ResizeByPixel_Square(formFile, userId, 256, PhotoCategory.UserProfile); // card
+            string filePath_enlarged = await _photoModifyService.ResizeImageByScale(formFile, userId, (int)DimensionsEnum._4_3_800x600, PhotoCategory.UserProfile); // enlarged photo
             // string filePath_enlarged2 = await _photoModifyService.ResizeImageByScale(formFile, userId, (int)DimensionsEnum._4_3_1280x960); // enlarged photo
 
             // if conversion fails
@@ -73,6 +76,127 @@ public class PhotoService(
 
         return null;
     }
+    #endregion UserProfile
+
+    #region Cover
+    public async Task<string[]?> AddCoverToDiskAsync(IFormFile formFile, ObjectId gameId)
+    {
+        if (formFile.Length > 0)
+        {
+            #region Resize and/or store images to disk
+
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 400, 600, PhotoCategory.Game, PhotoType.Cover);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 600, 900, PhotoCategory.Game, PhotoType.Cover);
+
+            if (filePath_small is null || filePath_big is null)
+            {
+                _logger.LogError("Photo addition failed. The returned filePath is null which is not allowed.");
+                return null;
+            }
+            #endregion Resize and/or store images to disk
+
+            #region Create the photo URLs and return the result
+            return [
+                filePath_small.Split(wwwRootUrl)[1],
+                filePath_big.Split(wwwRootUrl)[1]
+            ];
+            #endregion Create the photo URLs and return the result
+        }
+
+        return null;
+    }
+    #endregion Cover
+
+    #region Banner
+    public async Task<string[]?> AddBannerToDiskAsync(IFormFile formFile, ObjectId gameId)
+    {
+        if (formFile.Length > 0)
+        {
+            #region Resiza and/or store images to disk
+
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 360, 640, PhotoCategory.Game, PhotoType.Banner);
+            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 720, 1280, PhotoCategory.Game, PhotoType.Banner);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1080, 1920, PhotoCategory.Game, PhotoType.Banner);
+
+            if (filePath_small is null || filePath_medium is null || filePath_big is null)
+            {
+                _logger.LogError("Photo addition failed. the returned filePath is null witch is not allowed.");
+                return null;
+            }
+            #endregion Resiza and/or store images to disk
+
+            #region Create the photo URLs and return the result
+            return [
+                filePath_small.Split(wwwRootUrl)[1],
+                filePath_medium.Split(wwwRootUrl)[1],
+                filePath_big.Split(wwwRootUrl)[1]
+            ];
+            #endregion Create the photo URLs and return the result            
+        }
+
+        return null;
+    }
+    #endregion Banner
+
+    #region Logo
+    public async Task<string[]?> AddLogoToDiskAsync(IFormFile formFile, ObjectId gameId)
+    {
+        if (formFile.Length > 0)
+        {
+            #region  Resize and/or store images to disk
+
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 250, 600, PhotoCategory.Game, PhotoType.Logo);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 500, 1200, PhotoCategory.Game, PhotoType.Logo);
+
+            if (filePath_small is null || filePath_big is null)
+            {
+                _logger.LogError("Photo addition is failed. the returned filePath is null wich is not allowed.");
+                return null;
+            }
+            #endregion Resize and/or store images to disk
+
+            #region Create photo URLs and return the result
+            return [
+                filePath_small.Split(wwwRootUrl)[1],
+                filePath_big.Split(wwwRootUrl)[1]
+            ];
+            #endregion Create photo URLs and return the result
+        }
+
+        return null;
+    }
+    #endregion Logo
+
+    #region ScreenShots
+    public async Task<string[]?> AddScreenshotsToDiskAsync(IFormFile formFile, ObjectId gameId)
+    {
+        if (formFile.Length > 0)
+        {
+            #region Resiza and/or store images to disk
+
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 180, 320, PhotoCategory.Game, PhotoType.ScreenShots);
+            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 720, 1280, PhotoCategory.Game, PhotoType.ScreenShots);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1080, 1920, PhotoCategory.Game, PhotoType.ScreenShots);
+
+            if (filePath_small is null || filePath_medium is null || filePath_big is null)
+            {
+                _logger.LogError("Photo addition failed. the returned filePath is null wich is not allowed.");
+                return null;
+            }
+            #endregion Resiza and/or store images to disk
+
+            #region Create photo URLs and return the result
+            return [
+                filePath_small.Split(wwwRootUrl)[1],
+                filePath_medium.Split(wwwRootUrl)[1],
+                filePath_big.Split(wwwRootUrl)[1]
+            ];
+            #endregion Create photo URLs and return the result
+        }
+
+        return null;
+    }
+    #endregion ScreenShots
 
     /// <summary>
     /// Delete all files of the requested photo to be deleted.

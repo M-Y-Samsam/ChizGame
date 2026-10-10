@@ -6,7 +6,7 @@ namespace api.Controllers;
 [Authorize]
 public class UserController(IUserRepository userRepository) : BaseApiController
 {
-    [HttpPut("update/")]
+    [HttpPut("update")]
     public async Task<ActionResult<Response>> UpdateById(UserUpdateDto userInput, CancellationToken cancellationToken)
     {
         var userId = User.GetUserId();
@@ -20,14 +20,14 @@ public class UserController(IUserRepository userRepository) : BaseApiController
         : Ok(new Response( Message: "User has been updated successfully"));
     }
 
-    [HttpPut("upload-photo")]
+    [HttpPost("upload-photo")]
     public async Task<ActionResult<Response>> UploadPhoto([AllowedFileExtensions, FileSize(50_000, 4_000_000)] IFormFile file, CancellationToken cancellationToken)
     {
         if (file is null) return BadRequest("no file selcted for this request");
 
         string? userId = User.GetUserId();
 
-        if (userId is null) return BadRequest("you are not logged in. please log in agaon");
+        if (userId is null) return BadRequest("you are not logged in. please log in again");
 
         Photo? photo = await userRepository.UploadPhotoAsync(file, userId, cancellationToken);
 

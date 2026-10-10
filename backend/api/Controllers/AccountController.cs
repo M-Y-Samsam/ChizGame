@@ -12,8 +12,13 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
 
         LoggedInDto? loggedInDto = await accountRepository.RegisterAsync(userInput, cancellationToken);
 
-        if (loggedInDto is null)
-            return BadRequest("Email is already exist!");
+        if (loggedInDto?.Errors.Count() > 0)
+        {
+            foreach (var error in loggedInDto.Errors)
+            {
+                return BadRequest(error);
+            }
+        }
 
         return Ok(loggedInDto);
     }
@@ -23,7 +28,7 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
     {
         LoggedInDto? loggedInDto = await accountRepository.LogInAsync(userInput, cancellationToken);
 
-        if (loggedInDto is null)
+        if (loggedInDto!.IsWrongCred)
             return BadRequest("Name or Password is wrong!");
 
         return Ok(loggedInDto);
@@ -64,5 +69,13 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
         await accountRepository.ReloadLoggedInAsync(userId, token, cancellationToken);
 
         return loggedInDto is null ? Unauthorized("User is logged out or unauthorized. Login again") : loggedInDto;
+    }
+
+    [HttpGet("get-http")]
+    public void GetContect()
+    {
+        bool isTokenValid = HttpContext.Request.Headers.TryGetValue("Authorization", out var authHeader);
+
+        string token = authHeader.ToString().Split().Last();
     }
 }

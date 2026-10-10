@@ -2,5 +2,5 @@ namespace api.Interfaces;
 
 public interface ITokenService
 {
-    public string CreateToken(Gamer gamer);
+    public Task<string> CreateToken(Gamer gamer);
 }

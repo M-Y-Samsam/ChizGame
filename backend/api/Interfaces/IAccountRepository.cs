@@ -9,4 +9,5 @@ public interface IAccountRepository
     public Task<LoggedInDto?> LogInAsync(LogInDto userInput, CancellationToken cancellationToken);
     public Task<DeleteResult?> DeleteResultAsync(string userId, CancellationToken cancellationToken);
     public Task<LoggedInDto?> ReloadLoggedInAsync(string userId, string Token, CancellationToken cancellationToken);
+    public Task<UpdateResult?> UpdateLastActive(string userId, CancellationToken cancellationToken);
 }

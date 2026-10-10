@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
+using api.Models.Helpers;
 
-namespace api.Extensions
+namespace api.Extensions;
+
+public static class HttpExtension
 {
-    public class HttpExtension
+    public static void AddPaginationHeader(this HttpResponse response, PaginationHeader header)
     {
-        
+        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }; // format to json format
+        response.Headers.Append("Pagination", JsonSerializer.Serialize(header, jsonOptions)); // adding header to response
+        response.Headers.Append("Access-Control-Expose-Headers", "Pagination"); // allow CORS policy
     }
 }

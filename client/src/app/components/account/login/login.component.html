@@ -1,0 +1,17 @@
+<section>
+    <div class="form">
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input type="text" [formControl]="NameCtrll" matInput>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input type="password" [formControl]="PasswordCtrl" matInput>
+        </mat-form-field>
+
+        <button mat-fab (click)="login()" color="accent" [disabled]="loginFg.invalid">
+            Login
+        </button>
+    </div>
+</section>

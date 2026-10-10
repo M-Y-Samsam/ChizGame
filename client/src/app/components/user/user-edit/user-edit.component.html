@@ -1,0 +1,110 @@
+<div class="container">
+  <section class="head">
+    <h1 class="title">Your Profile</h1>
+  </section>
+  @if (member) {
+  <div class="content">
+    <section class="user-card">
+      <mat-card>
+        @if (member.photo) {
+        <img mat-card-image src="{{apiUrl + member.photo.url_165}}" width="240" height="240"
+          alt="Photo of {{member.name}}">
+        }
+        @if (!member.photo) {
+        <img mat-card-image src="member.jpg" width="240" height="240" alt="Photo of {{member.name}}">
+        }
+        <mat-card-content>
+          <div>
+            <strong>Location</strong>
+            <p>{{ member.city | titlecase }}, {{ member.country | titlecase }}</p>
+          </div>
+          <div>
+            <strong>Age</strong>
+            <p>{{ member.age }}</p>
+          </div>
+          <div>
+            <strong>Last Active</strong>
+            <p>{{member.lastActive | date}}</p>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button type="submit" mat-raised-button color="primary" (click)="updateUser()"
+            [disabled]="userEditFg.invalid || userEditFg.pristine"> Save Changes </button>
+        </mat-card-actions>
+      </mat-card>
+    </section>
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" class="user-info">
+      <mat-tab label="About {{member.name}}"></mat-tab>
+      <div class="tab-contentd">
+        <form class="about-contents">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <textarea cdkTextareaAutosize [formControl]="NameCtrl" [value]="member.name" placeholder="Your Name:" matInput>{{NameCtrl.value}}</textarea>
+            <mat-hint>Minimum of {{minInChars}} characters is requried. {{NameCtrl.value?.length}} /{{maxInChars}}</mat-hint>
+            @if (NameCtrl.hasError('required')) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+            }
+            @else if (NameCtrl.hasError('minLength')) {
+            <mat-error>
+              Minimum of {{minInChars}} characters is required.
+            </mat-error>
+            }
+            @else if (NameCtrl.hasError('maxLength')) {
+            <mat-error>
+              Maximum of {{maxInChars}} characters is reached.
+            </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
+            <textarea cdkTextareaAutosize [formControl]="CountryCtrl" [value]="CountryCtrl.value" placeholder="Your Country:" matInput>{{CountryCtrl.value}}</textarea>
+            <mat-hint>Minimum of {{minInChars}} characters is requried. {{CountryCtrl.value?.length}} /{{maxInChars}}</mat-hint>
+            @if (CountryCtrl.hasError('required')) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+            }
+            @else if (CountryCtrl.hasError('minLength')) {
+            <mat-error>
+              Minimum of {{minInChars}} characters is required.
+            </mat-error>
+            }
+            @else if (CountryCtrl.hasError('maxLength')) {
+            <mat-error>
+              Maximum of {{maxInChars}} characters is reached.
+            </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>City</mat-label>
+            <textarea cdkTextareaAutosize [formControl]="CityCtrl" [value]="CityCtrl.value" placeholder="Your City:" matInput>{{CityCtrl.value}}</textarea>
+            <mat-hint>Minimum of {{minInChars}} characters is requried. {{CityCtrl.value?.length}} /{{maxInChars}}</mat-hint>
+            @if (CityCtrl.hasError('required')) {
+            <mat-error>
+              This field is required.
+            </mat-error>
+            }
+            @else if (CityCtrl.hasError('minLength')) {
+            <mat-error>
+              Minimum of {{minInChars}} characters is required.
+            </mat-error>
+            }
+            @else if (CityCtrl.hasError('maxLength')) {
+            <mat-error>
+              Maximum of {{maxInChars}} characters is reached.
+            </mat-error>
+            }
+          </mat-form-field>
+        </form>
+      </div>
+      <mat-tab label="Edit Photos">
+        <div class="tab-contents">
+          <app-photo-editor [memberInput]="member"></app-photo-editor>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  }
+</div>

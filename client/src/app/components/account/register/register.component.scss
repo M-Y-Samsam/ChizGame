@@ -1,0 +1,28 @@
+section {
+    background: rgb(30, 27, 230);
+    display: flex;
+    justify-content: center;
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 0.5rem;
+
+        form {
+            background: rgb(254, 255, 252);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 4px solid black;
+            border-radius: 12px;
+            padding: 2rem;
+            gap: 1rem;
+
+            button {
+                margin: 8px;
+            }
+        }
+    }
+}

@@ -1,3 +1,4 @@
+using Image_Processing_WwwRoot.Helpers;
 using Image_Processing_WwwRoot.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -60,7 +61,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
 
     #region Resize Methods
 
-    public async Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex)
+    public async Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
         if (standardSizeIndex < 0 || standardSizeIndex >= Dimensions.Length)
@@ -80,10 +81,10 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage result = SKImage.FromBitmap(resized);
         using SKData data = result.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ResizeByScale);
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ResizeByScale, photoCategory);
     }
 
-    public async Task<string> ResizeByPixel(IFormFile formFile, ObjectId userId, int widthIn, int heightIn)
+    public async Task<string> ResizeByPixel(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory, PhotoType photoType)
     {
         ArgumentNullException.ThrowIfNull(formFile);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(widthIn);
@@ -101,10 +102,10 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage result = SKImage.FromBitmap(scaled);
         using SKData data = result.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ResizeByPixel, widthIn, heightIn);
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ResizeByPixel, photoCategory, widthIn, heightIn);
     }
 
-    public async Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int sideIn)
+    public async Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int sideIn, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sideIn);
@@ -116,7 +117,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
 
         int minSide = Math.Min(img.Width, img.Height);
         if (sideIn >= minSide)
-            return await CropWithOriginalSide_Square(formFile, userId);
+            return await CropWithOriginalSide_Square(formFile, userId, photoCategory);
 
         using SKImage cropped = CropCentered(img, minSide, minSide);
         using SKBitmap croppedBmp = SKBitmap.FromImage(cropped);
@@ -127,14 +128,14 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKData data = result.Encode(SKEncodedImageFormat.Webp, 90);
 
         return await SaveImage(data, userId, formFile.FileName,
-            (int)Operation.ResizeByPixelSquare, sideIn, sideIn);
+            (int)Operation.ResizeByPixelSquare, photoCategory, sideIn, sideIn);
     }
 
     #endregion
 
     #region Crop Methods
 
-    public async Task<string> Crop(IFormFile formFile, ObjectId userId, int widthIn, int heightIn)
+    public async Task<string> Crop(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(widthIn);
@@ -151,10 +152,10 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage cropped = CropCentered(img, widthIn, heightIn);
         using SKData data = cropped.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, widthIn, heightIn);
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, photoCategory, widthIn, heightIn);
     }
 
-    public async Task<string> CropWithOriginalSide_Square(IFormFile formFile, ObjectId userId)
+    public async Task<string> CropWithOriginalSide_Square(IFormFile formFile, ObjectId userId, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
 
@@ -167,10 +168,10 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage cropped = CropCentered(img, side, side);
         using SKData data = cropped.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, side, side);
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, photoCategory, side, side);
     }
 
-    public async Task<string> Crop_Square(IFormFile formFile, ObjectId userId, int sideIn)
+    public async Task<string> Crop_Square(IFormFile formFile, ObjectId userId, int sideIn, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sideIn);
@@ -184,7 +185,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage cropped = CropCentered(img, side, side);
         using SKData data = cropped.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, side, side);
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.Crop, photoCategory, side, side);
     }
 
     #endregion
@@ -192,15 +193,18 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
     #region Save Methods
 
     private async Task<string> SaveImage(SKData data, ObjectId userId,
-        string fileName, int operation, int? width = null, int? height = null)
+        string fileName, int operation, PhotoCategory photoCategory, int? width = null, int? height = null, PhotoType? photoType = null)
     {
         ArgumentNullException.ThrowIfNull(data);
 
-        string folder = Path.Combine(_env.WebRootPath, StorageRoot,
+        string folder = Path.Combine(_env.WebRootPath, StorageRoot, photoCategory.ToString(),
             userId.ToString(), Operations[operation]);
 
         if (width is not null && height is not null)
             folder = Path.Combine(folder, $"{width}x{height}");
+
+        if (photoType is not null)
+            folder = Path.Combine(folder, $"{photoType}");
 
         Directory.CreateDirectory(folder);
 

@@ -6,5 +6,7 @@ public record MemberDto(
     string Gender,
     string City,
     string Country,
+    DateTime LastActive,
+    Photo Photo,
     List<string> FavoriteGames
 );

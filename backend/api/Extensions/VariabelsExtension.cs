@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace api.Extensions;
 
-namespace api.Extensions
+public class AppVariabelsExtension
 {
-    public class VariabelsExtension
-    {
-        
-    }
+    public const string TokenKey = "TokenKey";
+
+    public const string CollectionUsers = "users";
+    public const string CollectionExceptionLogs = "exception-logs";
 }

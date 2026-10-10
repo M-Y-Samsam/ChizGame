@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace api.Services;
@@ -10,28 +11,35 @@ public class TokenService : ITokenService
 {
     private readonly IMongoCollection<Gamer> _collection;
     private readonly SymmetricSecurityKey? _key;
+    private readonly UserManager<Gamer> _userManager;
 
-    public TokenService(IConfiguration config, IMongoClient client, IMongoDbSettings dbSettings)
+    public TokenService(IConfiguration config, IMongoClient client, IMyMongoDbSettings dbSettings, UserManager<Gamer> userManager)
     {
         var database = client.GetDatabase(dbSettings.DatabaseName);
-        _collection = database.GetCollection<Gamer>("users");
+        _collection = database.GetCollection<Gamer>("gamers");
 
         string? tokenValue = config.GetValue<string>("TokenKey");
 
         _ = tokenValue ?? throw new ArgumentException("token key cannot be null", nameof(tokenValue));
 
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenValue!));
+
+        _userManager = userManager;
     }
 
-    public string CreateToken(Gamer gamer)
+    public async Task<string> CreateToken(Gamer gamer)
     {
         _ = _key ?? throw new ArgumentException("_key cannot be null", nameof(_key));
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId, gamer.Id!),
+            new Claim(JwtRegisteredClaimNames.NameId, gamer.Id.ToString()),
             // new Claim(JwtRegisteredClaimNames.Name, gamer.Name!),
         };
+
+        //get user`s roles and add them all into claims
+        IList<string>? roles = await _userManager.GetRolesAsync(gamer);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
