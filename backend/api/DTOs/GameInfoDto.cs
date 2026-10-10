@@ -11,6 +11,7 @@ public record GameInfoDto(
     int MainStoryHours,
     int CompletionistHours,
     bool IsGamePlayableAfterEnding,
+    int CriticRating,
     string TrailerUrl,
     List<GameTags> GameTags,
     string Developer,

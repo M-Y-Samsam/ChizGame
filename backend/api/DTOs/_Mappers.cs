@@ -16,6 +16,7 @@ public static class Mappers
             MainStoryHours = gameInfoDto.MainStoryHours,
             CompletionistHours = gameInfoDto.CompletionistHours,
             IsGamePlayableAfterEnding = gameInfoDto.IsGamePlayableAfterEnding,
+            CriticRating = gameInfoDto.CriticRating,
             TrailerUrl = gameInfoDto.TrailerUrl,
             GameTags = gameInfoDto.GameTags,
             Developer = gameInfoDto.Developer,
