@@ -97,8 +97,96 @@ public class GameRepository : IGameRepository
         return null;
     }
 
-    public Task<PagedList<Games>> GetAllGamesAsync(GameParams gameParams, CancellationToken cancellationToken)
+    public async Task<PagedList<Games>> GetAllGamesAsync(GameParams gameParams, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        PagedList<Games> games = await PagedList<Games>.CreatePagedListAsync(CreateQuery(gameParams), gameParams.PageSize, gameParams.PageNumber, cancellationToken);
+
+        return games;
+    }
+
+    public IQueryable<Games>? CreateQuery(GameParams gameParams)
+    {
+        if (gameParams.OrderBy == gameParams.ThenBy)
+            return null;
+
+        IQueryable<Games> query = _collection.AsQueryable();
+
+        IOrderedQueryable<Games> orderedQuery = gameParams.OrderBy switch
+        {
+            "oldest" => query.OrderBy(g => g.ReleaseDate),
+
+            "A-Z" => query.OrderBy(g => g.Title),
+            "Z-A" => query.OrderByDescending(g => g.Title),
+
+            "topRated" => query.OrderByDescending(g => g.CriticRating),
+            "worstRated" => query.OrderBy(g => g.CriticRating),
+
+            "minAgeToMaxAge" => query.OrderBy(g => g.MinimumAge),
+            "maxAgeToMinAge" => query.OrderByDescending(g => g.MinimumAge),
+
+            "smallest" => query.OrderBy(g => g.Size),
+            "largest" => query.OrderByDescending(g => g.Size),
+
+            // Newest
+            _ => query.OrderByDescending(g => g.ReleaseDate)
+        };
+
+        orderedQuery = gameParams.ThenBy switch
+        {
+            "newest" => orderedQuery.ThenByDescending(g => g.ReleaseDate),
+            "oldest" => orderedQuery.ThenBy(g => g.ReleaseDate),
+
+            "A-Z" => orderedQuery.ThenBy(g => g.Title),
+            "Z-A" => orderedQuery.ThenByDescending(g => g.Title),
+
+            "worstRated" => orderedQuery.ThenBy(g => g.CriticRating),
+
+            "minAgeToMaxAge" => orderedQuery.ThenBy(g => g.MinimumAge),
+            "maxAgeToMinAge" => orderedQuery.ThenByDescending(g => g.MinimumAge),
+
+            "smallest" => orderedQuery.ThenBy(g => g.Size),
+            "largest" => orderedQuery.ThenByDescending(g => g.Size),
+
+            // TopRated
+            _ => orderedQuery.OrderByDescending(g => g.CriticRating)
+        };
+
+        query = orderedQuery;
+
+        if (!string.IsNullOrEmpty(gameParams.Search))
+        {
+            query = query.Where(
+                g => g.Title.Contains(gameParams.Search, StringComparison.CurrentCultureIgnoreCase)
+                || g.Developer.Contains(gameParams.Search, StringComparison.CurrentCultureIgnoreCase)
+                || g.Publisher.Contains(gameParams.Search, StringComparison.CurrentCultureIgnoreCase)
+            );
+        }
+
+        if (gameParams.GameTags.Count > 0)
+        {
+            query = gameParams.TagMatchMode switch
+            {
+                "AND" => query.Where(g => gameParams.GameTags.All(selectedTag => g.GameTags.Contains(selectedTag))),
+
+                // OR
+                _ => query.Where(g => gameParams.GameTags.Any(tag => g.GameTags.Contains(tag)))
+            };
+        }
+
+        if (gameParams.Platforms.Count > 0)
+        {
+            query = gameParams.PlatformMatchMode switch
+            {
+                "AND" => query.Where(g => gameParams.Platforms.All(selectedPlatforms => g.Platforms.Contains(selectedPlatforms))),
+
+                // OR
+                _ => query.Where(g => gameParams.Platforms.Any(platforms => g.Platforms.Contains(platforms)))
+            };
+        }
+
+        query = query.Where(g => g.MinimumAge >= gameParams.MinAge && g.MinimumAge <= gameParams.MaxAge);
+        query = query.Where(g => g.Size >= gameParams.MinSize && g.Size <= gameParams.MaxSize);
+
+        return query;
     }
 }

@@ -21,5 +21,6 @@ public record GameInfoDto(
     List<Platforms> Platforms,
     GameRequirement MinimumRequirement,
     GameRequirement MaximumRequirement,
+    double Size,
     List<GameDownloadLink> DownloadLinks
 );

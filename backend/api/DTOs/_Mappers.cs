@@ -25,6 +25,7 @@ public static class Mappers
             Platforms = gameInfoDto.Platforms,
             MinimumRequirements = gameInfoDto.MinimumRequirement,
             MaximumRequirements = gameInfoDto.MaximumRequirement,
+            Size = gameInfoDto.Size,
             DownloadLinks = gameInfoDto.DownloadLinks
         };
 

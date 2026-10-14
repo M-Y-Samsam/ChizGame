@@ -38,5 +38,6 @@ public class Games
     public GameRequirement MinimumRequirements { get; init; } = new(); // Minimum system requirements for this game
     public GameRequirement MaximumRequirements { get; init; } = new(); // Maximum system requirements for this game
 
+    public double Size { get; init; }
     public List<GameDownloadLink> DownloadLinks { get; init; } = [];
 }
