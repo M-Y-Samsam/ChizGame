@@ -7,6 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),
-    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor]))
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: { disabled: true } }
   ]
 };
   

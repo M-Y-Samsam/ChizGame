@@ -3,7 +3,7 @@
     <header>
       <nav>
         <app-navbar />
-      </nav>  
+      </nav>
     </header>
 
     <main>
@@ -11,9 +11,10 @@
         <router-outlet />
       </div>
     </main>
-    
+    @if (showFooter) {
     <footer>
       <app-footer />
     </footer>
+    }
   </div>
 </section>

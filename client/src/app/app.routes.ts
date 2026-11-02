@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
+import { AuthComponent } from './components/account/auth/auth.component';
 import { RegisterComponent } from './components/account/register/register.component';
 import { LoginComponent } from './components/account/login/login.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -12,6 +13,7 @@ import { authLoggedInGuard } from './guards/auth-logged-in.guard';
 import { UserEditComponent } from './components/user/user-edit/user-edit.component';
 import { NoAccessComponent } from './components/errors/no-access/no-access.component';
 import { ServerErrorComponent } from './components/errors/server-error/server-error.component';
+import { TestComponent } from './components/test/test.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -31,8 +33,8 @@ export const routes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [authLoggedInGuard],
         children: [
-            { path: 'account/register', component: RegisterComponent },
-            { path: 'account/login', component: LoginComponent },
+            { path: 'account/register', component: AuthComponent },
+            { path: 'account/login', component: AuthComponent },
         ]
     },
     { path: 'footer', component: FooterComponent },

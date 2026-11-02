@@ -1,0 +1,45 @@
+<section class="auth-page">
+
+    <div class="neon-background" aria-hidden="true"></div>
+
+    <div class="auth-card">
+
+        <a class="brand" routerLink="/">
+
+            <img class="brand-logo" src="/images/chizgame-logo.webp" alt="ChizGame Logo">
+
+            <span class="brand-name">
+
+                <span class="brand-chiz">Chiz</span><span class="brand-game">Game</span>
+
+            </span>
+
+        </a>
+
+        <div class="auth-tabs">
+            <button mat-button class="login-tab" [class.active]="activeTab === 'login'" (click)="activeTab = 'login'">
+                Login
+            </button>
+
+            <button mat-button class="register-tab" [class.active]="activeTab === 'register'" (click)="activeTab = 'register'">
+                Register
+            </button>
+        </div>
+
+        <div class="auth-content">
+
+            @if (activeTab == 'login')
+            {
+            <app-login />
+            }
+
+            @else
+            {
+            <app-register />
+            }
+
+        </div>
+
+    </div>
+
+</section>

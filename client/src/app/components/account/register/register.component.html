@@ -1,44 +1,108 @@
 <section>
-    <div class="form">
-        <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input type="text" [formControl]="NameCtrl" matInput>
-        </mat-form-field>
+    <form class="form">
+        <div class="inputs name-input">
+            <mat-form-field class="auth-field name-field" appearance="outline">
+                <mat-icon matIconPrefix class="sym">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M9.18,10.83Q8,9.65 8,8T9.18,5.18T12,4t2.83,1.18T16,8t-1.17,2.82T12,12T9.18,10.83ZM4,18V17.2q0-0.85 0.44-1.56q0.44-0.71 1.16-1.09q1.55-0.78 3.15-1.16T12,13t3.25,0.39t3.15,1.16q0.72,0.38 1.16,1.09T20,17.2V18q0,0.82-0.59,1.41T18,20H6q-0.82,0-1.41-0.59T4,18Zm2,0H18V17.2q0-0.27-0.14-0.5q-0.14-0.22-0.36-0.35q-1.35-0.68-2.72-1.01T12,15T9.23,15.34T6.5,16.35Q6.28,16.48 6.14,16.7Q6,16.93 6,17.2V18Zm7.41-8.59Q14,8.82 14,8T13.41,6.59T12,6T10.59,6.59Q10,7.18 10,8t0.59,1.41T12,10t1.41-0.59ZM12,8Zm0,10Z" />
+                    </svg>
+                </mat-icon>
+                <mat-label>Name</mat-label>
+                <input type="text" [formControl]="NameCtrl" matInput>
+                <mat-hint>Enter Your Name</mat-hint>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input type="email" [formControl]="EmailCtrl" matInput>
-        </mat-form-field>
+        <div class="inputs email-input">
+            <mat-form-field class="auth-field email-field" appearance="outline">
+                <mat-icon matIconPrefix class="sym"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        height="24px" width="24px" fill="#FFFFFF">
+                        <path
+                            d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H20q0.83,0 1.41,0.59Q22,5.18 22,6V18q0,0.82-0.59,1.41T20,20H4ZM20,8l-7.48,4.67q-0.13,0.08-0.26,0.11T12,12.83t-0.26-0.04t-0.26-0.11L4,8V18H20V8Zm-8,3l8-5H4l8,5ZM4,8V8.25Q4,8.13 4,7.94T4,7.52q0-0.5 0-0.75T4,6.8V6V6.8Q4,6.52 4,6.79T4,7.52Q4,7.77 4,7.96T4,8.25V8V18V8Z" />
+                    </svg></mat-icon>
+                <mat-label>Email</mat-label>
+                <input type="email" [formControl]="EmailCtrl" matInput>
+                <mat-hint>Enter Your Email Address</mat-hint>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input type="password" [formControl]="PasswordCtrl" matInput>
-        </mat-form-field>
+        <div class="inputs password-input">
+            <mat-form-field class="auth-field password-field" appearance="outline">
+                <mat-icon matIconPrefix class="sym"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        height="24px" width="24px" fill="#FFFFFF">
+                        <path
+                            d="M3,17H21q0.43,0 0.71,0.29T22,18t-0.29,0.71T21,19H3q-0.42,0-0.71-0.29Q2,18.43 2,18t0.29-0.71T3,17Zm1-5.55L3.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.58-0.07q-0.27-0.15-0.35-0.45q-0.07-0.3 0.08-0.58L2.7,10.7H1.75q-0.32,0-0.54-0.21T1,9.95T1.21,9.41T1.75,9.2H2.7L2.23,8.4Q2.08,8.13 2.15,7.82Q2.23,7.52 2.5,7.38Q2.78,7.22 3.08,7.3T3.53,7.65L4,8.45l0.48-0.8Q4.63,7.38 4.93,7.3Q5.23,7.22 5.5,7.38Q5.78,7.52 5.85,7.82T5.78,8.4L5.3,9.2H6.25q0.33,0 0.54,0.21T7,9.95T6.79,10.49T6.25,10.7H5.3l0.47,0.85q0.15,0.28 0.08,0.58T5.5,12.58T4.93,12.65q-0.3-0.07-0.45-0.35L4,11.45Zm8,0L11.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.58-0.07t-0.35-0.45q-0.07-0.3 0.08-0.58L10.7,10.7H9.75q-0.32,0-0.54-0.21T9,9.95T9.21,9.41T9.75,9.2H10.7L10.23,8.4q-0.15-0.27-0.08-0.57T10.5,7.38q0.28-0.15 0.58-0.07t0.45,0.35L12,8.45l0.48-0.8q0.15-0.27 0.45-0.35q0.3-0.08 0.57,0.07q0.28,0.15 0.35,0.45T13.78,8.4L13.3,9.2h0.95q0.33,0 0.54,0.21T15,9.95t-0.21,0.54T14.25,10.7H13.3l0.47,0.85q0.15,0.28 0.08,0.58T13.5,12.58t-0.57,0.07q-0.3-0.07-0.45-0.35L12,11.45Zm8,0L19.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.57-0.07q-0.27-0.15-0.35-0.45t0.07-0.58L18.7,10.7H17.75q-0.32,0-0.54-0.21T17,9.95t0.21-0.54T17.75,9.2H18.7L18.23,8.4q-0.15-0.27-0.07-0.57T18.5,7.38q0.28-0.15 0.57-0.07q0.3,0.07 0.45,0.35L20,8.45l0.48-0.8q0.15-0.27 0.45-0.35q0.3-0.08 0.57,0.07q0.28,0.15 0.35,0.45T21.78,8.4L21.3,9.2h0.95q0.33,0 0.54,0.21T23,9.95t-0.21,0.54T22.25,10.7H21.3l0.48,0.85q0.15,0.28 0.07,0.58T21.5,12.58t-0.57,0.07q-0.3-0.07-0.45-0.35L20,11.45Z" />
+                    </svg></mat-icon>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Confirm Password</mat-label>
-            <input type="password" [formControl]="ConfirmPasswordCtrl" matInput>
-        </mat-form-field>
+                <!-- <mat-icon matIconSuffix class="sym"></mat-icon> -->
+                <mat-label>Password</mat-label>
+                <input type="password" [formControl]="PasswordCtrl" matInput>
+                <mat-hint>Enter Your Password</mat-hint>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Gender</mat-label>
-            <input type="text" [formControl]="GenderCtrl" matInput>
-        </mat-form-field>
+        <div class="inputs confirm-password-input">
+            <mat-form-field class="auth-field confirm-password-field" appearance="outline">
+                <mat-icon matIconPrefix class="sym"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        height="24px" width="24px" fill="#FFFFFF">
+                        <path
+                            d="M6,22q-0.82,0-1.41-0.59T4,20V10Q4,9.17 4.59,8.59T6,8H7V6Q7,3.92 8.46,2.46T12,1t3.54,1.46T17,6V8h1q0.82,0 1.41,0.59T20,10V20q0,0.82-0.59,1.41T18,22H6Zm0-2H18V10H6V20Zm7.41-3.59Q14,15.83 14,15t-0.59-1.41T12,13t-1.41,0.59Q10,14.18 10,15t0.59,1.41T12,17t1.41-0.59ZM9,8h6V6q0-1.25-0.88-2.13T12,3T9.88,3.88T9,6V8ZM6,20V10V20Z" />
+                    </svg></mat-icon>
+                <mat-label>Confirm Password</mat-label>
+                <input type="password" [formControl]="ConfirmPasswordCtrl" matInput>
+                <mat-hint>Enter Your Password Again</mat-hint>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Date Of Birth</mat-label>
-            <input [formControl]="DateOfBirthCtrl" [min]="minDate" [max]="maxDate" matInput [matDatepicker]="dp3"
-                placeholder="Enter your date of birth">
-            <mat-hint>Between {{minDate.getFullYear()}} and {{maxDate.getFullYear()}}</mat-hint>
-            <mat-datepicker-toggle matIconSuffix [for]="dp3"></mat-datepicker-toggle>
-            <mat-datepicker #dp3 touchUi disabled="false"></mat-datepicker>
-            @if (DateOfBirthCtrl.hasError('required')) {
-            <mat-error>This field is required.</mat-error>
-            }
-        </mat-form-field>
+        <div class="inputs dob-input">
+            <mat-form-field class="auth-field dob-field" appearance="outline">
+                <mat-icon matIconPrefix class="mys"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        height="24px" width="24px" fill="#FFFFFF">
+                        <path
+                            d="M7.29,13.71Q7,13.43 7,13t0.29-0.71T8,12t0.71,0.29T9,13T8.71,13.71T8,14q-0.42,0-0.71-0.29Zm4,0Q11,13.43 11,13t0.29-0.71T12,12t0.71,0.29T13,13t-0.29,0.71T12,14t-0.71-0.29Zm4,0Q15,13.43 15,13t0.29-0.71T16,12q0.43,0 0.71,0.29T17,13t-0.29,0.71T16,14t-0.71-0.29ZM5,22q-0.83,0-1.41-0.59T3,20V6Q3,5.18 3.59,4.59T5,4H6V3Q6,2.57 6.29,2.29T7,2T7.71,2.29T8,3V4h8V3q0-0.43 0.29-0.71T17,2t0.71,0.29T18,3V4h1q0.83,0 1.41,0.59Q21,5.18 21,6V20q0,0.82-0.59,1.41T19,22H5Zm0-2H19V10H5V20ZM5,8H19V6H5V8ZM5,8V6V8Z" />
+                    </svg></mat-icon>
+                <mat-label>Date Of Birth</mat-label>
+                <input [formControl]="DateOfBirthCtrl" [min]="minDate" [max]="maxDate" matInput [matDatepicker]="dp3"
+                    placeholder="Enter your date of birth">
+                <mat-hint>Between {{minDate.getFullYear()}} and {{maxDate.getFullYear()}}</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="dp3"></mat-datepicker-toggle>
+                <mat-datepicker #dp3 touchUi disabled="false"></mat-datepicker>
+                @if (DateOfBirthCtrl.hasError('required')) {
+                <mat-error>This field is required.</mat-error>
+                }
+            </mat-form-field>
+        </div>
 
-        <button mat-fab (click)="register()" coloe="accent" [disabled]="registerFg.invalid">
-            Register
+        <div class="inputs gender-input">
+            <label class="gender-label">Gender :</label>
+
+            <div class="gender-option">
+                <label class="radio-wrapper">
+                    <input type="radio" name="gender" value="male" [formControl]="GenderCtrl" />
+                    <span class="radio-mark"><span class="dot"></span></span>
+                    <mat-icon matIconPrefix class="sym gender-icons">man</mat-icon>
+                    <span class="label">Male</span>
+                </label>
+
+                <label class="radio-wrapper">
+                    <input type="radio" name="gender" value="female" [formControl]="GenderCtrl" />
+                    <span class="radio-mark"><span class="dot"></span></span>
+                    <mat-icon matIconPrefix class="sym gender-icons">woman</mat-icon>
+                    <span class="label">Female</span>
+                </label>
+            </div>
+        </div>
+
+        <button mat-button type="submit" class="register-button" [class.register-click]="registerIsClicking"
+            (click)="register(); registerIsClicking = true" (animationend)="registerIsClicking = false" color="accent"
+            [disabled]="registerFg.invalid">
+            <mat-icon>
+                <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#FFFFFF"><path d="M18,11H16q-0.42,0-0.71-0.29Q15,10.43 15,10q0-0.43 0.29-0.71T16,9h2V7q0-0.43 0.29-0.71T19,6t0.71,0.29T20,7V9h2q0.43,0 0.71,0.29T23,10t-0.29,0.71T22,11H20v2q0,0.42-0.29,0.71T19,14t-0.71-0.29Q18,13.43 18,13V11ZM6.18,10.83Q5,9.65 5,8T6.18,5.18T9,4t2.83,1.18T13,8t-1.17,2.82T9,12T6.18,10.83ZM1,18V17.2q0-0.85 0.44-1.56q0.44-0.71 1.16-1.09q1.55-0.78 3.15-1.16T9,13t3.25,0.39t3.15,1.16q0.72,0.38 1.16,1.09T17,17.2V18q0,0.82-0.59,1.41T15,20H3q-0.82,0-1.41-0.59T1,18Z"/></svg> -->
+                person_add
+            </mat-icon>
+            Create Account >
         </button>
-    </div>
+    </form>
 </section>

@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ import { MatInputModule } from '@angular/material/input';
     RouterLink,
     FormsModule, ReactiveFormsModule,
     MatButtonModule, MatFormField,
-    MatLabel,MatInputModule
+    MatLabel, MatInputModule,
+    MatIcon
 ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -24,10 +26,11 @@ export class LoginComponent {
   accountService = inject(AccountService);
   fB = inject(FormBuilder);
   loggedInRes : LoggedIn | undefined | null ;
+  loginIsCliging = false;
 
   loginFg = this.fB.group({
     nameCtrl: ['', Validators.required],
-    passwordCtrl: ['']
+    passwordCtrl: ['', Validators.required]
   })
 
   get NameCtrll(): FormControl {

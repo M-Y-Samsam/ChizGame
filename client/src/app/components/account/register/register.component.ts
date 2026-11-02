@@ -10,10 +10,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatDatepickerModule, MatHint, MatSuffix, MatInputModule, MatError, MatButtonModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatDatepickerModule, MatHint, MatSuffix, MatInputModule,
+    MatError, MatButtonModule, MatRadioButton, MatRadioGroup, MatIcon],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -22,6 +26,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   fB = inject(FormBuilder);
   subscribedRegisterUser: Subscription | undefined;
   errors: string[] | undefined;
+  registerIsClicking = false;
 
   minDate = new Date();
   maxDate = new Date();
@@ -39,12 +44,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   registerFg = this.fB.group({
-    nameCtrl: '',
+    nameCtrl: ['', [Validators.required]],
     emailCtrl: ['', [Validators.required, Validators.email]],
-    genderCtrl: 'male',
-    dateOfBirthCtrl: '',
-    passwordCtrl: '',
-    confirmPasswordCtrl: ''
+    genderCtrl: ['male', [Validators.required]],
+    dateOfBirthCtrl: ['', Validators.required],
+    passwordCtrl: ['', Validators.required],
+    confirmPasswordCtrl: ['', [Validators.required]]
   });
 
   get NameCtrl(): FormControl {

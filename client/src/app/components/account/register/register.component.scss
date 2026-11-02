@@ -1,28 +1,340 @@
+@use '@angular/material' as mat;
+
 section {
-    background: rgb(30, 27, 230);
     display: flex;
+    // background: rgb(30, 27, 230);
     justify-content: center;
+    width: 100%;
 
     .form {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 0.5rem;
-        gap: 0.5rem;
+        align-items: stretch;
+        width: 100%;
+        gap: 12px;
 
-        form {
-            background: rgb(254, 255, 252);
+        .inputs {
+            z-index: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 4px solid black;
-            border-radius: 12px;
-            padding: 2rem;
-            gap: 1rem;
 
-            button {
-                margin: 8px;
+            background: #99999923;
+            backdrop-filter: blur(5px);
+
+            height: auto;
+            // max-height: 56px;
+            width: auto;
+
+            // clip-path: inset(-20px -20px 19px -20px);
+
+            border-radius: 20px;
+
+            mat-hint {
+                color: #fcfcfc;
             }
+        }
+
+        .gender-input {
+            background: none;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+
+            .gender-label {
+                color: #fcfcfc;
+                letter-spacing: 2px;
+                text-shadow: 0 0 20px #fcfcfc;
+                font-size: 25px;
+                font-weight: bold;
+            }
+
+            .gender-option {
+                display: flex;
+                justify-content: space-between;
+                gap: 28px;
+
+                .gender-icons {
+                    color: #fcfcfc;
+                    margin-left: 10px;
+                }
+            }
+
+            .radio-wrapper {
+                --radio-size: 25px;
+                --radio-color: #fcfcfc;
+                --radio-color-2: #d6d6d6;
+                --radio-shadow: rgba(252, 252, 252, 0.3);
+                --radio-border: rgba(252, 252, 252, 0.7);
+                --radio-dot: #1a1a1a;
+
+                display: flex;
+                align-items: center;
+                position: relative;
+                cursor: pointer;
+                padding: 10px;
+
+                // اینپوت اصلی مخفیه ولی هنوز کار می‌کنه
+                input {
+                    position: absolute;
+                    opacity: 0;
+                    height: 0;
+                    width: 0;
+                }
+
+                // دایره‌ی رادیو
+                .radio-mark {
+                    position: relative;
+                    width: var(--radio-size);
+                    height: var(--radio-size);
+                    border: 2px solid var(--radio-border);
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 0 15px var(--radio-shadow);
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                }
+
+                // گرادینتی که موقع انتخاب باز می‌شه
+                .radio-mark::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(45deg, var(--radio-color), var(--radio-color-2));
+                    opacity: 0;
+                    transform: scale(0) rotate(-45deg);
+                    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                }
+
+                // نقطه‌ی وسط
+                .dot {
+                    position: relative;
+                    z-index: 1;
+                    width: 0;
+                    height: 0;
+                    border-radius: 50%;
+                    background: var(--radio-dot);
+                    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                }
+
+                // حالت انتخاب‌شده
+                input:checked~.radio-mark {
+                    animation: radio-pulse 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                }
+
+                input:checked~.radio-mark::before {
+                    opacity: 1;
+                    transform: scale(1) rotate(0);
+                }
+
+                input:checked~.radio-mark .dot {
+                    width: 9px;
+                    height: 9px;
+                }
+
+                // هاور
+                &:hover .radio-mark {
+                    border-color: var(--radio-color);
+                    transform: scale(1.1);
+                    box-shadow:
+                        0 0 20px var(--radio-shadow),
+                        0 0 40px var(--radio-shadow),
+                        inset 0 0 10px var(--radio-shadow);
+                }
+
+                // فوکوس کیبورد
+                input:focus-visible~.radio-mark {
+                    outline: 2px solid var(--radio-color);
+                    outline-offset: 2px;
+                }
+
+                // لیبل
+                .label {
+                    margin-left: 12px;
+                    color: var(--radio-color);
+                    font-size: 16px;
+                    text-shadow: 0 0 10px var(--radio-shadow);
+                    opacity: 0.9;
+                    transition: all 0.3s;
+                }
+
+                &:hover .label {
+                    opacity: 1;
+                    transform: translateX(4px);
+                }
+
+                // نقطه‌های نورانی دو طرف موقع هاور
+                &::before,
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    width: 4px;
+                    height: 4px;
+                    border-radius: 50%;
+                    background: var(--radio-color);
+                    opacity: 0;
+                    transition: all 0.5s;
+                }
+
+                &::before {
+                    left: -6px;
+                }
+
+                &::after {
+                    right: -6px;
+                }
+
+                &:hover::before {
+                    opacity: 1;
+                    transform: translateX(-8px);
+                    box-shadow: 0 0 10px var(--radio-color);
+                }
+
+                &:hover::after {
+                    opacity: 1;
+                    transform: translateX(8px);
+                    box-shadow: 0 0 10px var(--radio-color);
+                }
+            }
+        }
+
+        // .full-dob-input {
+        //     margin: 0;
+        //     padding: 0;
+        //     gap: 0;
+        // }
+
+        .auth-field {
+            width: 100%;
+
+            position: relative;
+            z-index: 5;
+
+            @include mat.form-field-overrides ((outlined-container-shape: 20px,
+
+                    outlined-focus-label-text-color: #fcfcfc,
+                    outlined-focus-outline-color: #fcfcfc,
+                    outlined-caret-color: #fcfcfc,
+                    // outlined-container-color: #999
+                ));
+
+            // --mdc-outlined-text-field-container-color: red;
+            // --mdc-outlined-text-field-outline-color: #999;
+            // --mdc-outlined-text-field-hover-outline-color: #fcfcfc;
+            // --mdc-outlined-text-field-focus-outline-color: #fcfcfc;
+
+            // --mdc-outlined-text-field-input-text-color: #ffffff;
+            // --mdc-outlined-text-field-label-text-color: #a7a7b5;
+
+            // --mdc-outlined-text-field-container-shape: 20px;
+        }
+
+        .register-button {
+            background: rgba(25, 25, 32, 0.6);
+            color: #fcfcfc;
+
+            width: 100%;
+            margin-top: 8px;
+
+            box-shadow: 0 0 20px 2px #7e7e7e, inset 0 0 20px 2px #7e7e7e;
+
+            transition:
+                0.7s ease;
+
+        }
+
+        .register-button:disabled {
+            background: none;
+            // color: rgba(25, 25, 32, 0.6);
+            box-shadow: none;
+
+            transition:
+                0.7s ease;
+        }
+
+        .register-button:hover:not(:disabled) {
+            box-shadow: 0 0 20px 2px #fcfcfc,
+                inset 0 0 20px 2px #fcfcfc,
+                inset -250px 0 0 0 #fcfcfc,
+                inset 250px 0 0 0 #fcfcfc;
+
+            color: #151515;
+
+            transition:
+                0.7s ease;
+        }
+
+        .register-button.register-click {
+            animation: register-click 1s ease forwards;
         }
     }
 }
+
+@keyframes register-click {
+    0% {
+        box-shadow: 0 0 20px 2px rgba(57, 255, 20, 1),
+            inset 0 0 20px 2px rgba(57, 255, 20, 1);
+
+        background: rgba(57, 255, 20, 1);
+    }
+
+    20% {
+        box-shadow: 0 0 20px 2px rgba(176, 38, 255, 1),
+            inset 0 0 20px 2px rgba(176, 38, 255, 1);
+
+        background: rgba(176, 38, 255, 1);
+    }
+
+    40% {
+        box-shadow: 0 0 20px 2px rgba(255, 59, 92, 1),
+            inset 0 0 20px 2px rgba(255, 59, 92, 1);
+
+        background: rgba(255, 59, 92, 1);
+    }
+
+    60% {
+        box-shadow: 0 0 20px 2px rgba(0, 183, 255, 1),
+            inset 0 0 20px 2px rgba(0, 183, 255, 1);
+
+        background: rgba(0, 183, 255, 1);
+    }
+
+    80% {
+        box-shadow: 0 0 20px 2px rgba(255, 200, 87, 1),
+            inset 0 0 20px 2px rgba(255, 200, 87, 1);
+
+        background: rgba(255, 200, 87, 1);
+    }
+
+    100% {
+        box-shadow: 0 0 20px 2px #fcfcfc,
+            inset 0 0 20px 2px #fcfcfc;
+
+        background: #fcfcfc;
+    }
+}
+
+@keyframes radio-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(252, 252, 252, 0.3);
+    }
+    50% {
+        transform: scale(0.9);
+        box-shadow:
+            0 0 30px rgba(252, 252, 252, 0.3),
+            0 0 50px rgba(252, 252, 252, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(252, 252, 252, 0.3);
+    }
+}
+
+// rgba(57, 255, 20, 1)
+// rgba(176, 38, 255, 1)
+// rgba(255, 59, 92, 1)
+// rgba(0, 183, 255, 1)
+// rgba(255, 200, 87, 1)

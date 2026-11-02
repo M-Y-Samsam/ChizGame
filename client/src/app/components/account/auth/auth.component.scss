@@ -1,0 +1,152 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // padding: 24px;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    .neon-background {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+
+        background-image: url('/images/chizgame-bg.webp');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        pointer-events: none;
+    }
+
+    .auth-card {
+        background: rgba(25, 25, 32, 0.1);
+
+        height: 100%;
+
+        width: 100%;
+        max-width: 480px;
+        margin-top: 70px;
+        padding: 32px;
+        border: 1px solid #fcfcfc;
+        border-radius: 30px;
+        backdrop-filter: blur(5px);
+        position: relative;
+        z-index: 1;
+
+        // gap: 20px;
+
+        transition:
+            box-shadow 0.7s ease;
+
+        .brand {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            // color: #f5f5ff;
+            text-decoration: none;
+
+            font-family: 'Audiowide', sans-serif;
+            font-size: 25px;
+            font-weight: 400;
+            letter-spacing: 2px;
+
+            .brand-logo {
+                width: 120px;
+                height: 120px;
+                object-fit: contain;
+                display: block;
+                flex-shrink: 0;
+            }
+
+            .brand-name {
+                display: inline-flex;
+
+                font-size: 50px;
+
+                .brand-chiz {
+                    color: #f5f5ff;
+                    text-shadow: 0 0 10px #f5f5ff, 0 0 20px #f5f5ff, 0 0 30px #f5f5ff;
+                }
+
+                .brand-game {
+                    color: #7e7e7e;
+                    text-shadow: 0 0 10px #7e7e7e, 0 0 20px #7e7e7e, 0 0 30px #7e7e7e;
+                }
+            }
+        }
+
+        .auth-tabs {
+            display: flex;
+            // gap: 12px;
+            margin: 24px 0;
+            background: #25252b3d;
+            border-radius: 50px;
+            border: 1px solid #fcfcfc;
+
+            button {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                border-radius: 50px;
+                background: #27272700;
+                color: #999;
+                cursor: pointer;
+                transition:
+                    0.7s ease;
+            }
+
+            button.active {
+                background: #e5e5e5;
+                color: #151515;
+                box-shadow: 0 0 20px 2px #fcfcfc;
+            }
+
+            // button:hover:not(.active) {
+            //     box-shadow: 0 0 20px 1px #7e7e7e;
+
+            //     color: #fcfcfc;
+
+            //     transition:
+            //         0.7s ease;
+            // }
+
+            .login-tab {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .login-tab:not(.active):hover {
+                color: #fcfcfc;
+
+                box-shadow: 0 0 20px 1px #7e7e7e, inset -250px 0 0 0 #7e7e7e;
+            }
+
+            .register-tab {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .register-tab:not(.active):hover {
+                color: #f5f5ff;
+
+                box-shadow: 0 0 20px 1px #7e7e7e,inset 250px 0 0 0 #7e7e7e;
+            }
+        }
+    }
+
+    .auth-card:hover {
+
+        box-shadow: 0 0 10px 1px #e5e5e5, inset 0 0 10px 1px #e5e5e5;
+
+        transition:
+            box-shadow 0.7s ease;
+    }
+
+}
