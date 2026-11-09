@@ -58,9 +58,6 @@ public class GameRepository : IGameRepository
             PhotoType.Logo =>
                 await _photoService.AddLogoToDiskAsync(formFile, objectId),
 
-            PhotoType.ScreenShots =>
-                await _photoService.AddScreenshotsToDiskAsync(formFile, objectId),
-
             _ => null
         };
 
@@ -86,20 +83,49 @@ public class GameRepository : IGameRepository
                     UpdateDefinition<Games> updateLogo = Builders<Games>.Update.Set(doc => doc.LogoImage, gamePhoto);
                     UpdateResult updateLogoResult = await _collection.UpdateOneAsync(doc => doc.Id == gameId, updateLogo, null, cancellationToken);
                     return updateLogoResult.ModifiedCount == 1 ? gamePhoto : null;
-
-                case PhotoType.ScreenShots:
-                    UpdateDefinition<Games> updateScreenshots = Builders<Games>.Update.Push(doc => doc.Screenshots, gamePhoto);
-                    UpdateResult updateScreenshotsResult = await _collection.UpdateOneAsync(doc => doc.Id == gameId, updateScreenshots, null, cancellationToken);
-                    return updateScreenshotsResult.ModifiedCount == 1 ? gamePhoto : null;
             }
         }
 
         return null;
     }
 
+    public async Task<List<GamePhoto>?> UploadScreenshotsAsync(IEnumerable<IFormFile> formFiles, PhotoType photoType, string gameId, CancellationToken cancellationToken)
+    {
+        if (!ObjectId.TryParse(gameId, out var objectId)) return null;
+
+        Games? games = await _collection.Find(doc => doc.Id == gameId).FirstOrDefaultAsync(cancellationToken);
+
+        if (games is null) return null;
+
+        List<GamePhoto> gamePhotos = [];
+
+        foreach (IFormFile formFile in formFiles)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            string[]? imageUrls = await _photoService.AddScreenshotsToDiskAsync(formFile, objectId);
+
+            if (imageUrls is null)
+            {
+                _logger.LogError("Screenshot {FileName} could not processed.", formFile.FileName);
+                continue;
+            }
+
+            gamePhotos.Add(Mappers.ConvertImageUrlsToGamePhoto(imageUrls, PhotoType.ScreenShots));
+        }
+
+        if (gamePhotos.Count == 0) return null;
+
+        UpdateDefinition<Games> update = Builders<Games>.Update.PushEach(doc => doc.Screenshots, gamePhotos);
+
+        UpdateResult result = await _collection.UpdateOneAsync(doc => doc.Id == gameId, update, null, cancellationToken);
+
+        return result.ModifiedCount == 1 ? gamePhotos : null;
+    }
+
     public async Task<PagedList<Games>> GetAllGamesAsync(GameParams gameParams, CancellationToken cancellationToken)
     {
-        PagedList<Games> games = await PagedList<Games>.CreatePagedListAsync(CreateQuery(gameParams), gameParams.PageSize, gameParams.PageNumber, cancellationToken);
+        PagedList<Games> games = await PagedList<Games>.CreatePagedListAsync(CreateQuery(gameParams), gameParams.PageNumber, gameParams.PageSize, cancellationToken);
 
         return games;
     }
@@ -113,19 +139,20 @@ public class GameRepository : IGameRepository
 
         IOrderedQueryable<Games> orderedQuery = gameParams.OrderBy switch
         {
-            "oldest" => query.OrderBy(g => g.ReleaseDate),
+            GameOrder.Newest => query.OrderByDescending(g => g.ReleaseDate),
+            GameOrder.Oldest => query.OrderBy(g => g.ReleaseDate),
 
-            "A-Z" => query.OrderBy(g => g.Title),
-            "Z-A" => query.OrderByDescending(g => g.Title),
+            GameOrder.AtoZ => query.OrderBy(g => g.Title),
+            GameOrder.ZtoA => query.OrderByDescending(g => g.Title),
 
-            "topRated" => query.OrderByDescending(g => g.CriticRating),
-            "worstRated" => query.OrderBy(g => g.CriticRating),
+            GameOrder.TopRated => query.OrderByDescending(g => g.CriticRating),
+            GameOrder.WorstRated => query.OrderBy(g => g.CriticRating),
 
-            "minAgeToMaxAge" => query.OrderBy(g => g.MinimumAge),
-            "maxAgeToMinAge" => query.OrderByDescending(g => g.MinimumAge),
+            GameOrder.MinAgeToMaxAge => query.OrderBy(g => g.MinimumAge),
+            GameOrder.MaxAgeToMinAge => query.OrderByDescending(g => g.MinimumAge),
 
-            "smallest" => query.OrderBy(g => g.Size),
-            "largest" => query.OrderByDescending(g => g.Size),
+            GameOrder.Smallest => query.OrderBy(g => g.Size),
+            GameOrder.Largest => query.OrderByDescending(g => g.Size),
 
             // Newest
             _ => query.OrderByDescending(g => g.ReleaseDate)
@@ -133,19 +160,20 @@ public class GameRepository : IGameRepository
 
         orderedQuery = gameParams.ThenBy switch
         {
-            "newest" => orderedQuery.ThenByDescending(g => g.ReleaseDate),
-            "oldest" => orderedQuery.ThenBy(g => g.ReleaseDate),
+            GameOrder.Newest => orderedQuery.ThenByDescending(g => g.ReleaseDate),
+            GameOrder.Oldest => orderedQuery.ThenBy(g => g.ReleaseDate),
 
-            "A-Z" => orderedQuery.ThenBy(g => g.Title),
-            "Z-A" => orderedQuery.ThenByDescending(g => g.Title),
+            GameOrder.AtoZ => orderedQuery.ThenBy(g => g.Title),
+            GameOrder.ZtoA => orderedQuery.ThenByDescending(g => g.Title),
 
-            "worstRated" => orderedQuery.ThenBy(g => g.CriticRating),
+            GameOrder.TopRated => orderedQuery.ThenByDescending(g => g.CriticRating),
+            GameOrder.WorstRated => orderedQuery.ThenBy(g => g.CriticRating),
 
-            "minAgeToMaxAge" => orderedQuery.ThenBy(g => g.MinimumAge),
-            "maxAgeToMinAge" => orderedQuery.ThenByDescending(g => g.MinimumAge),
+            GameOrder.MinAgeToMaxAge => orderedQuery.ThenBy(g => g.MinimumAge),
+            GameOrder.MaxAgeToMinAge => orderedQuery.ThenByDescending(g => g.MinimumAge),
 
-            "smallest" => orderedQuery.ThenBy(g => g.Size),
-            "largest" => orderedQuery.ThenByDescending(g => g.Size),
+            GameOrder.Smallest => orderedQuery.ThenBy(g => g.Size),
+            GameOrder.Largest => orderedQuery.ThenByDescending(g => g.Size),
 
             // TopRated
             _ => orderedQuery.OrderByDescending(g => g.CriticRating)
