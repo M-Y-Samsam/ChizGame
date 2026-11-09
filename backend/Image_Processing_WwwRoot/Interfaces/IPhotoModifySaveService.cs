@@ -6,11 +6,13 @@ namespace Image_Processing_WwwRoot.Interfaces;
 
 public interface IPhotoModifySaveService
 {
+    public Task<string> ConvertToWebp(IFormFile formFile, ObjectId userId, PhotoCategory photoCategory, PhotoType photoType);
     public Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex, PhotoCategory photoCategory);
     public Task<string> ResizeByPixel(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory, PhotoType photoType);
     public Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int side, PhotoCategory photoCategory);
     public Task<string> Crop(IFormFile formFile, ObjectId userId, int widthIn, int heightIn, PhotoCategory photoCategory);
     public Task<string> Crop_Square(IFormFile formFile, ObjectId userId, int side, PhotoCategory photoCategory);
     public Task<string> CropWithOriginalSide_Square(IFormFile formFile, ObjectId userId, PhotoCategory photoCategory);
-    public Task<string> SaveImageAsIs(IFormFile formFile, ObjectId userId, int operation);
+    public Task<string> SaveImageAsIs(IFormFile formFile, ObjectId userId, int operation, PhotoCategory photoCategory);
+    public Task<string> SaveGamePhotoAsIs(IFormFile formFile, ObjectId userId, int operation, PhotoCategory photoCategory, PhotoType photoType);
 }

@@ -4,10 +4,8 @@ namespace api.Helpers;
 
 public class GameParams : PaginationParams
 {
-    [MaxLength(30)]
-    public string? OrderBy { get; set; } = "newest";
-    [MaxLength(30)]
-    public string? ThenBy { get; set; } = "topRated";
+    public GameOrder OrderBy { get; set; }
+    public GameOrder ThenBy { get; set; } 
     [MaxLength(100)]
     public string? Search { get; set; } = string.Empty;
     public List<GameTags> GameTags { get; set; } = [];

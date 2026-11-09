@@ -114,9 +114,9 @@ public class PhotoService(
         {
             #region Resiza and/or store images to disk
 
-            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 360, 640, PhotoCategory.Game, PhotoType.Banner);
-            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 720, 1280, PhotoCategory.Game, PhotoType.Banner);
-            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1080, 1920, PhotoCategory.Game, PhotoType.Banner);
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 640, 360, PhotoCategory.Game, PhotoType.Banner);
+            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 1280, 720, PhotoCategory.Game, PhotoType.Banner);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1920, 1080, PhotoCategory.Game, PhotoType.Banner);
 
             if (filePath_small is null || filePath_medium is null || filePath_big is null)
             {
@@ -145,10 +145,12 @@ public class PhotoService(
         {
             #region  Resize and/or store images to disk
 
-            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 250, 600, PhotoCategory.Game, PhotoType.Logo);
-            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 500, 1200, PhotoCategory.Game, PhotoType.Logo);
+            string filePath_original = await _photoModifyService.ConvertToWebp(formFile, gameId, PhotoCategory.Game, PhotoType.Logo);
 
-            if (filePath_small is null || filePath_big is null)
+            // string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 250, 600, PhotoCategory.Game, PhotoType.Logo);
+            // string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 500, 1200, PhotoCategory.Game, PhotoType.Logo);
+
+            if (filePath_original is null)
             {
                 _logger.LogError("Photo addition is failed. the returned filePath is null wich is not allowed.");
                 return null;
@@ -157,8 +159,7 @@ public class PhotoService(
 
             #region Create photo URLs and return the result
             return [
-                filePath_small.Split(wwwRootUrl)[1],
-                filePath_big.Split(wwwRootUrl)[1]
+                filePath_original.Split(wwwRootUrl)[1]
             ];
             #endregion Create photo URLs and return the result
         }
@@ -174,9 +175,9 @@ public class PhotoService(
         {
             #region Resiza and/or store images to disk
 
-            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 180, 320, PhotoCategory.Game, PhotoType.ScreenShots);
-            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 720, 1280, PhotoCategory.Game, PhotoType.ScreenShots);
-            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1080, 1920, PhotoCategory.Game, PhotoType.ScreenShots);
+            string filePath_small = await _photoModifyService.ResizeByPixel(formFile, gameId, 320, 180, PhotoCategory.Game, PhotoType.ScreenShots);
+            string filePath_medium = await _photoModifyService.ResizeByPixel(formFile, gameId, 1280, 720, PhotoCategory.Game, PhotoType.ScreenShots);
+            string filePath_big = await _photoModifyService.ResizeByPixel(formFile, gameId, 1920, 1080, PhotoCategory.Game, PhotoType.ScreenShots);
 
             if (filePath_small is null || filePath_medium is null || filePath_big is null)
             {

@@ -22,6 +22,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
 
     private static readonly string[] Operations =
     [
+        "convert-to-webp",
         "resize-scale",
         "resize-pixel",
         "resize-pixel-square",
@@ -31,6 +32,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
 
     private enum Operation
     {
+        ConverToWebp,
         ResizeByScale,
         ResizeByPixel,
         ResizeByPixelSquare,
@@ -59,6 +61,17 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
 
     #endregion
 
+    #region Convert to Webp
+    public async Task<string> ConvertToWebp(IFormFile formFile, ObjectId userId, PhotoCategory photoCategory, PhotoType photoType)
+    {
+        using SKImage img = LoadImage(formFile);
+
+        using SKData data = img.Encode(SKEncodedImageFormat.Webp, 90);
+
+        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ConverToWebp, photoCategory, null, null, photoType);
+    }
+    #endregion Convert to Webp
+
     #region Resize Methods
 
     public async Task<string> ResizeImageByScale(IFormFile formFile, ObjectId userId, int standardSizeIndex, PhotoCategory photoCategory)
@@ -68,7 +81,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
             throw new ArgumentOutOfRangeException(nameof(standardSizeIndex));
 
         if (formFile.Length < 300_000)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveImageAsIs(formFile, userId, (int)Operation.Original, photoCategory);
 
         using SKImage img = LoadImage(formFile);
         using SKBitmap bmp = SKBitmap.FromImage(img);
@@ -93,7 +106,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage img = LoadImage(formFile);
 
         if (widthIn >= img.Width || heightIn >= img.Height)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveGamePhotoAsIs(formFile, userId, (int)Operation.Original, photoCategory, photoType);
 
         using SKBitmap srcBmp = SKBitmap.FromImage(img);
         using SKBitmap scaled = srcBmp.Resize(new SKImageInfo(widthIn, heightIn), PhotoSampling)
@@ -102,7 +115,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage result = SKImage.FromBitmap(scaled);
         using SKData data = result.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return await SaveImage(data, userId, formFile.FileName, (int)Operation.ResizeByPixel, photoCategory, widthIn, heightIn);
+        return await SaveGameImage(data, userId, formFile.FileName, (int)Operation.ResizeByPixel, photoCategory, photoType, widthIn, heightIn);
     }
 
     public async Task<string> ResizeByPixel_Square(IFormFile formFile, ObjectId userId, int sideIn, PhotoCategory photoCategory)
@@ -113,7 +126,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage img = LoadImage(formFile);
 
         if (img.Width == img.Height && sideIn >= img.Width)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveImageAsIs(formFile, userId, (int)Operation.Original, photoCategory);
 
         int minSide = Math.Min(img.Width, img.Height);
         if (sideIn >= minSide)
@@ -144,7 +157,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage img = LoadImage(formFile);
 
         if (widthIn >= img.Width && heightIn >= img.Height)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveImageAsIs(formFile, userId, (int)Operation.Original, photoCategory);
 
         widthIn = Math.Min(widthIn, img.Width);
         heightIn = Math.Min(heightIn, img.Height);
@@ -162,7 +175,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage img = LoadImage(formFile);
 
         if (img.Width == img.Height)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveImageAsIs(formFile, userId, (int)Operation.Original, photoCategory);
 
         int side = Math.Min(img.Width, img.Height);
         using SKImage cropped = CropCentered(img, side, side);
@@ -179,7 +192,7 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         using SKImage img = LoadImage(formFile);
 
         if (sideIn > img.Width && img.Width == img.Height)
-            return await SaveImageAsIs(formFile, userId, (int)Operation.Original);
+            return await SaveImageAsIs(formFile, userId, (int)Operation.Original, photoCategory);
 
         int side = Math.Min(sideIn, Math.Min(img.Width, img.Height));
         using SKImage cropped = CropCentered(img, side, side);
@@ -198,13 +211,16 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         ArgumentNullException.ThrowIfNull(data);
 
         string folder = Path.Combine(_env.WebRootPath, StorageRoot, photoCategory.ToString(),
-            userId.ToString(), Operations[operation]);
+            userId.ToString());
+
+        if (photoType is not null)
+            folder = Path.Combine(folder, $"{photoType}");
+
+        folder = Path.Combine(folder, Operations[operation]);
 
         if (width is not null && height is not null)
             folder = Path.Combine(folder, $"{width}x{height}");
 
-        if (photoType is not null)
-            folder = Path.Combine(folder, $"{photoType}");
 
         Directory.CreateDirectory(folder);
 
@@ -219,12 +235,58 @@ public sealed class PhotoModifySaveService : IPhotoModifySaveService
         return filePath;
     }
 
-    public async Task<string> SaveImageAsIs(IFormFile formFile, ObjectId userId, int operation)
+        private async Task<string> SaveGameImage(SKData data, ObjectId userId,
+        string fileName, int operation, PhotoCategory photoCategory, PhotoType photoType, int? width = null, int? height = null)
+    {
+        ArgumentNullException.ThrowIfNull(data);
+
+        string folder = Path.Combine(_env.WebRootPath, StorageRoot, photoCategory.ToString(),
+            userId.ToString(), photoType.ToString(), Operations[operation]);
+
+        if (width is not null && height is not null)
+            folder = Path.Combine(folder, $"{width}x{height}");
+
+        Directory.CreateDirectory(folder);
+
+        string uniqueName = $"{Guid.NewGuid():N}_{ToWebpName(fileName)}";
+        string filePath = Path.Combine(folder, uniqueName);
+
+        await using var fs = new FileStream(filePath, FileMode.Create,
+            FileAccess.Write, FileShare.None, 81920, useAsync: true);
+        using Stream stream = data.AsStream();
+        await stream.CopyToAsync(fs);
+
+        return filePath;
+    }
+
+    public async Task<string> SaveImageAsIs(IFormFile formFile, ObjectId userId, int operation, PhotoCategory photoCategory)
     {
         ArgumentNullException.ThrowIfNull(formFile);
 
         string folder = Path.Combine(_env.WebRootPath, StorageRoot,
             userId.ToString(), Operations[operation]);
+        Directory.CreateDirectory(folder);
+
+        string uniqueName = $"{Guid.NewGuid():N}_{ToWebpName(formFile.FileName)}";
+        string filePath = Path.Combine(folder, uniqueName);
+
+        using SKImage img = LoadImage(formFile);
+        using SKData data = img.Encode(SKEncodedImageFormat.Webp, 90);
+
+        await using var fs = new FileStream(filePath, FileMode.Create,
+            FileAccess.Write, FileShare.None, 81920, useAsync: true);
+        using Stream s = data.AsStream();
+        await s.CopyToAsync(fs);
+
+        return filePath;
+    }
+
+    public async Task<string> SaveGamePhotoAsIs(IFormFile formFile, ObjectId userId, int operation, PhotoCategory photoCategory, PhotoType photoType)
+    {
+        ArgumentNullException.ThrowIfNull(formFile);
+
+        string folder = Path.Combine(_env.WebRootPath, StorageRoot,photoCategory.ToString(),
+            userId.ToString(), photoType.ToString(), Operations[operation]);
         Directory.CreateDirectory(folder);
 
         string uniqueName = $"{Guid.NewGuid():N}_{ToWebpName(formFile.FileName)}";

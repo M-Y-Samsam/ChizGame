@@ -4,8 +4,9 @@ using Image_Processing_WwwRoot.Helpers;
 namespace api.Models;
 
 public record GamePhoto(
-    string SmallPhotoUrl,
+    string? SmallPhotoUrl,
     string? MediumPhotoUrl,
-    string BigPhotoUrl,
+    string? BigPhotoUrl,
+    string? OriginalPhotoUrl,
     PhotoType PhotoType
 );

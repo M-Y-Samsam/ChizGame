@@ -7,5 +7,6 @@ public interface IGameRepository
 {
     public Task<Games?> AddGameAsync(GameInfoDto input, CancellationToken cancellationToken);
     public Task<GamePhoto?> UploadGamePhotoAsync(IFormFile formFile, PhotoType photoType, string gameId, CancellationToken cancellationToken);
+    public Task<List<GamePhoto>?> UploadScreenshotsAsync(IEnumerable<IFormFile> formFiles, PhotoType photoType, string gameId, CancellationToken cancellationToken);
     public Task<PagedList<Games>> GetAllGamesAsync(GameParams gameParams, CancellationToken cancellationToken);
 }

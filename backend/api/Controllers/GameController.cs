@@ -20,18 +20,59 @@ namespace api.Controllers
         }
 
         [Authorize(Policy = "RequiredAdminRole")]
-        [HttpPut("upload-game-photo/{gameId}")]
-        public async Task<ActionResult<Response>> UploadGamePhoto([AllowedFileExtensions, FileSize(50_000, 4_000_000)] IFormFile formFile, string gameId, PhotoType photoType, CancellationToken cancellationToken)
+        [HttpPut("upload-game-cover/{gameId}")]
+        public async Task<ActionResult<Response>> UploadGameCover([AllowedFileExtensions] IFormFile formFile, string gameId, CancellationToken cancellationToken)
         {
             if (formFile is null) return BadRequest("no file selected for this request.");
 
-            GamePhoto? gamePhoto = await gameRepository.UploadGamePhotoAsync(formFile, photoType, gameId, cancellationToken);
+            GamePhoto? gamePhoto = await gameRepository.UploadGamePhotoAsync(formFile, PhotoType.Cover, gameId, cancellationToken);
 
             return gamePhoto is null
                 ? BadRequest("Add photo failed.")
                 : Ok(new Response(Message: "Photo upload successfully."));
         }
 
+        [Authorize(Policy = "RequiredAdminRole")]
+        [HttpPut("upload-game-banner/{gameId}")]
+        public async Task<ActionResult<Response>> UploadGameBanner([AllowedFileExtensions] IFormFile formFile, string gameId, CancellationToken cancellationToken)
+        {
+            if (formFile is null) return BadRequest("no file selected for this request.");
+
+            GamePhoto? gamePhoto = await gameRepository.UploadGamePhotoAsync(formFile, PhotoType.Banner, gameId, cancellationToken);
+
+            return gamePhoto is null
+                ? BadRequest("Add photo failed.")
+                : Ok(new Response(Message: "Photo upload successfully."));
+        }
+
+        [Authorize(Policy = "RequiredAdminRole")]
+        [HttpPut("upload-game-logo/{gameId}")]
+        public async Task<ActionResult<Response>> UploadGameLogo([AllowedFileExtensions] IFormFile formFile, string gameId, CancellationToken cancellationToken)
+        {
+            if (formFile is null) return BadRequest("no file selected for this request.");
+
+            GamePhoto? gamePhoto = await gameRepository.UploadGamePhotoAsync(formFile, PhotoType.Logo, gameId, cancellationToken);
+
+            return gamePhoto is null
+                ? BadRequest("Add photo failed.")
+                : Ok(new Response(Message: "Photo upload successfully."));
+        }
+
+        [Authorize(Policy = "RequiredAdminRole")]
+        [HttpPut("upload-game-screenshots/{gameId}")]
+        public async Task<ActionResult<Response>> UploadGameScreenshots(
+        List<IFormFile> formFiles, string gameId, CancellationToken cancellationToken)
+        {
+            if (formFiles is null || formFiles.Count == 0 ) return BadRequest("no file selected for this request.");
+
+            if (formFiles.Count > 10) return BadRequest("you can upload at most 10 screenshots at once.");
+
+            List<GamePhoto>? gamePhoto = await gameRepository.UploadScreenshotsAsync(formFiles, PhotoType.ScreenShots, gameId, cancellationToken);
+
+            return gamePhoto is null
+                ? BadRequest("Add photo failed.")
+                : Ok(new Response(Message: "Photo upload successfully."));
+        }
         [HttpGet("get-all")]
         public async Task<ActionResult<IEnumerable<Games>>> GetAll([FromQuery] GameParams gameParams, CancellationToken cancellationToken)
         {

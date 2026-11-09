@@ -2,7 +2,8 @@ namespace api.Helpers;
 
 public class PaginationParams
 {
-    private const int MaxPageSize = 25; // field/variable
+    private const int MaxPageSize = 50; // field/variable
+    private const int MinPageSize = 5;
 
     public int PageNumber { get; init; } = 1; // Short property
 
@@ -10,6 +11,22 @@ public class PaginationParams
     public int PageSize
     {
         get { return _pageSize; }
-        set { _pageSize = value > MaxPageSize ? MaxPageSize : value; }
+        set
+        {
+            if (value > MaxPageSize)
+            {
+                _pageSize = MaxPageSize;
+            }
+             
+            if (value < MinPageSize)
+            {
+                _pageSize = MinPageSize;
+            }
+
+            else
+            {
+                _pageSize = value ;
+            }
+        }
     }
 }
