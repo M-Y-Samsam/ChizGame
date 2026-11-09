@@ -21,6 +21,7 @@ public static class Mappers
             GameTags = gameInfoDto.GameTags,
             Developer = gameInfoDto.Developer,
             Publisher = gameInfoDto.Publisher,
+            ReleaseDate = gameInfoDto.ReleaseDate,
             MinimumAge = gameInfoDto.MinimumAge,
             Platforms = gameInfoDto.Platforms,
             MinimumRequirements = gameInfoDto.MinimumRequirement,
@@ -82,12 +83,24 @@ public static class Mappers
 
     public static GamePhoto ConvertImageUrlsToGamePhoto(string[] imageUrls, PhotoType photoType)
     {
+        if(imageUrls.Length == 1)
+        {
+            return new GamePhoto(
+                SmallPhotoUrl: null,
+                MediumPhotoUrl: null,
+                BigPhotoUrl: null,
+                OriginalPhotoUrl: imageUrls[0],
+                PhotoType: photoType
+            );
+        }
+
         if (imageUrls.Length == 2)
         {
             return new GamePhoto(
                 SmallPhotoUrl: imageUrls[0],
                 MediumPhotoUrl: null,
                 BigPhotoUrl: imageUrls[1],
+                OriginalPhotoUrl: null,
                 PhotoType: photoType
             );
         }
@@ -96,6 +109,7 @@ public static class Mappers
             SmallPhotoUrl: imageUrls[0],
             MediumPhotoUrl: imageUrls[1],
             BigPhotoUrl: imageUrls[2],
+            OriginalPhotoUrl:null,
             PhotoType: photoType
         );
     }
