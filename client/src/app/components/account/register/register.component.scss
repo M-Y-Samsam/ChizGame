@@ -31,6 +31,7 @@ section {
             mat-hint {
                 color: #fcfcfc;
             }
+
         }
 
         .gender-input {
@@ -212,6 +213,10 @@ section {
             position: relative;
             z-index: 5;
 
+            ::ng-deep .mat-mdc-form-field-icon-suffix {
+                padding-right: 8px;
+            }
+
             @include mat.form-field-overrides ((outlined-container-shape: 20px,
 
                     outlined-focus-label-text-color: #fcfcfc,
@@ -230,6 +235,7 @@ section {
 
             // --mdc-outlined-text-field-container-shape: 20px;
         }
+
 
         .register-button {
             background: rgba(25, 25, 32, 0.6);
@@ -321,12 +327,14 @@ section {
         transform: scale(1);
         box-shadow: 0 0 20px rgba(252, 252, 252, 0.3);
     }
+
     50% {
         transform: scale(0.9);
         box-shadow:
             0 0 30px rgba(252, 252, 252, 0.3),
             0 0 50px rgba(252, 252, 252, 0.3);
     }
+
     100% {
         transform: scale(1);
         box-shadow: 0 0 20px rgba(252, 252, 252, 0.3);

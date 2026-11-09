@@ -12,12 +12,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-register',
   imports: [RouterLink, FormsModule, ReactiveFormsModule, MatFormField,
     MatLabel, MatDatepickerModule, MatHint, MatSuffix, MatInputModule,
-    MatError, MatButtonModule, MatRadioButton, MatRadioGroup, MatIcon],
+    MatError, MatButtonModule, MatRadioButton, MatRadioGroup, MatIcon, A11yModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -26,7 +27,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
   fB = inject(FormBuilder);
   subscribedRegisterUser: Subscription | undefined;
   errors: string[] | undefined;
+  
   registerIsClicking = false;
+
+  hidePassword = true;
+  hideConfirm = true;
 
   minDate = new Date();
   maxDate = new Date();

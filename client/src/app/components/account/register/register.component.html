@@ -35,10 +35,11 @@
                         <path
                             d="M3,17H21q0.43,0 0.71,0.29T22,18t-0.29,0.71T21,19H3q-0.42,0-0.71-0.29Q2,18.43 2,18t0.29-0.71T3,17Zm1-5.55L3.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.58-0.07q-0.27-0.15-0.35-0.45q-0.07-0.3 0.08-0.58L2.7,10.7H1.75q-0.32,0-0.54-0.21T1,9.95T1.21,9.41T1.75,9.2H2.7L2.23,8.4Q2.08,8.13 2.15,7.82Q2.23,7.52 2.5,7.38Q2.78,7.22 3.08,7.3T3.53,7.65L4,8.45l0.48-0.8Q4.63,7.38 4.93,7.3Q5.23,7.22 5.5,7.38Q5.78,7.52 5.85,7.82T5.78,8.4L5.3,9.2H6.25q0.33,0 0.54,0.21T7,9.95T6.79,10.49T6.25,10.7H5.3l0.47,0.85q0.15,0.28 0.08,0.58T5.5,12.58T4.93,12.65q-0.3-0.07-0.45-0.35L4,11.45Zm8,0L11.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.58-0.07t-0.35-0.45q-0.07-0.3 0.08-0.58L10.7,10.7H9.75q-0.32,0-0.54-0.21T9,9.95T9.21,9.41T9.75,9.2H10.7L10.23,8.4q-0.15-0.27-0.08-0.57T10.5,7.38q0.28-0.15 0.58-0.07t0.45,0.35L12,8.45l0.48-0.8q0.15-0.27 0.45-0.35q0.3-0.08 0.57,0.07q0.28,0.15 0.35,0.45T13.78,8.4L13.3,9.2h0.95q0.33,0 0.54,0.21T15,9.95t-0.21,0.54T14.25,10.7H13.3l0.47,0.85q0.15,0.28 0.08,0.58T13.5,12.58t-0.57,0.07q-0.3-0.07-0.45-0.35L12,11.45Zm8,0L19.53,12.3q-0.15,0.28-0.45,0.35q-0.3,0.08-0.57-0.07q-0.27-0.15-0.35-0.45t0.07-0.58L18.7,10.7H17.75q-0.32,0-0.54-0.21T17,9.95t0.21-0.54T17.75,9.2H18.7L18.23,8.4q-0.15-0.27-0.07-0.57T18.5,7.38q0.28-0.15 0.57-0.07q0.3,0.07 0.45,0.35L20,8.45l0.48-0.8q0.15-0.27 0.45-0.35q0.3-0.08 0.57,0.07q0.28,0.15 0.35,0.45T21.78,8.4L21.3,9.2h0.95q0.33,0 0.54,0.21T23,9.95t-0.21,0.54T22.25,10.7H21.3l0.48,0.85q0.15,0.28 0.07,0.58T21.5,12.58t-0.57,0.07q-0.3-0.07-0.45-0.35L20,11.45Z" />
                     </svg></mat-icon>
-
-                <!-- <mat-icon matIconSuffix class="sym"></mat-icon> -->
                 <mat-label>Password</mat-label>
-                <input type="password" [formControl]="PasswordCtrl" matInput>
+                <input [type]="hidePassword ? 'password' : 'text' " [formControl]="PasswordCtrl" matInput>
+                <button mat-icon-button matIconSuffix type="button" (click)="hidePassword = !hidePassword">
+                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
                 <mat-hint>Enter Your Password</mat-hint>
             </mat-form-field>
         </div>
@@ -51,7 +52,10 @@
                             d="M6,22q-0.82,0-1.41-0.59T4,20V10Q4,9.17 4.59,8.59T6,8H7V6Q7,3.92 8.46,2.46T12,1t3.54,1.46T17,6V8h1q0.82,0 1.41,0.59T20,10V20q0,0.82-0.59,1.41T18,22H6Zm0-2H18V10H6V20Zm7.41-3.59Q14,15.83 14,15t-0.59-1.41T12,13t-1.41,0.59Q10,14.18 10,15t0.59,1.41T12,17t1.41-0.59ZM9,8h6V6q0-1.25-0.88-2.13T12,3T9.88,3.88T9,6V8ZM6,20V10V20Z" />
                     </svg></mat-icon>
                 <mat-label>Confirm Password</mat-label>
-                <input type="password" [formControl]="ConfirmPasswordCtrl" matInput>
+                <input [type]="hideConfirm ? 'password' : 'text'" [formControl]="ConfirmPasswordCtrl" matInput>
+                <button mat-icon-button matIconSuffix type="button" (click)="hideConfirm = !hideConfirm">
+                    <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
                 <mat-hint>Enter Your Password Again</mat-hint>
             </mat-form-field>
         </div>
