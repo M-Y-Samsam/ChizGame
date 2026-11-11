@@ -13,6 +13,7 @@ public class Games
 
     public string ShortDes { get; init; } = string.Empty;
     public string FullDes { get; init; } = string.Empty;
+   
     public int MainStoryHours { get; init; }
     public int CompletionistHours { get; init; }
     public bool IsGamePlayableAfterEnding { get; init; }
