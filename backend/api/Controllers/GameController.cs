@@ -84,7 +84,7 @@ namespace api.Controllers
             PaginationHeader paginationHeader = new(
                 CurrentPage: pagedGames.CurrentPage,
                 ItemsPerPage: pagedGames.PageSize,
-                TotslItems: pagedGames.TotalItems,
+                TotalItems: pagedGames.TotalItems,
                 TotalPages: pagedGames.TotalPages
             );
 

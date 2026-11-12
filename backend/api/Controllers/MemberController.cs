@@ -27,7 +27,7 @@ public class MemberController(IMemberRepository memberRepository) : BaseApiContr
             CurrentPage: PagedGamers.CurrentPage,
             ItemsPerPage: PagedGamers.PageSize,
             TotalPages: PagedGamers.TotalPages,
-            TotslItems: PagedGamers.TotalItems
+            TotalItems: PagedGamers.TotalItems
         );
 
         Response.AddPaginationHeader(paginationHeader);
