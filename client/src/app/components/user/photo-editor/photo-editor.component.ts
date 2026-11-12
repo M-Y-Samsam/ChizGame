@@ -1,7 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { Member } from '../../../models/member.model';
 import { LoggedIn } from '../../../models/logged-in.model';
-import { environmetn } from '../../../environments/environmet.development';
+import { environment } from '../../../../environments/environment.development';
 import { FileUploader, FileUploadModule } from 'ng2-file-upload';
 import { AccountService } from '../../../services/account.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,7 +28,7 @@ import { take } from 'rxjs';
 export class PhotoEditorComponent implements OnInit {
   @Input('memberInput') member: Member | undefined;
   loggedInUser: LoggedIn | null | undefined;
-  apiUrl: string = environmetn.apiUrl;
+  apiUrl: string = environment.apiUrl;
   uploader: FileUploader | undefined;
   hasBaseDropZoneOver = false;
   private _accountService = inject(AccountService);

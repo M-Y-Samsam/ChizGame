@@ -7,14 +7,14 @@ import { Login } from '../models/login.model';
 import { Member } from '../models/member.model';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { environmetn } from '../environments/environmet.development';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   http = inject(HttpClient);
-  private readonly _baseApiUrl: string = environmetn.apiUrl + 'api/';
+  private readonly _baseApiUrl: string = environment.apiUrl + 'api/';
   platformId = inject(PLATFORM_ID);
   router = inject(Router);
   loggedInUserSig = signal<LoggedIn | null>(null);

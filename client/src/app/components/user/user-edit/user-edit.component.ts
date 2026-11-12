@@ -8,7 +8,7 @@ import { LoggedIn } from '../../../models/logged-in.model';
 import { MemberService } from '../../../services/member.service';
 import { max, take } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
-import { environmetn } from '../../../environments/environmet.development';
+import { environment } from '../../../../environments/environment.development';
 import { AbstractControl, FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -38,7 +38,7 @@ export class UserEditComponent implements OnInit {
   readonly maxInChars = 30;
   readonly minInChars = 2;
 
-  apiUrl = environmetn.apiUrl;
+  apiUrl = environment.apiUrl;
   member: Member | undefined;
 
   userEditFg = this._fB.group({
