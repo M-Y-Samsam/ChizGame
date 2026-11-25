@@ -132,9 +132,6 @@ public class GameRepository : IGameRepository
 
     public IQueryable<Games>? CreateQuery(GameParams gameParams)
     {
-        if (gameParams.OrderBy == gameParams.ThenBy)
-            return null;
-
         IQueryable<Games> query = _collection.AsQueryable();
 
         IOrderedQueryable<Games> orderedQuery = gameParams.OrderBy switch
@@ -158,6 +155,8 @@ public class GameRepository : IGameRepository
             _ => query.OrderByDescending(g => g.ReleaseDate)
         };
 
+if (gameParams.ThenBy != gameParams.OrderBy)
+{   
         orderedQuery = gameParams.ThenBy switch
         {
             GameOrder.Newest => orderedQuery.ThenByDescending(g => g.ReleaseDate),
@@ -176,8 +175,9 @@ public class GameRepository : IGameRepository
             GameOrder.Largest => orderedQuery.ThenByDescending(g => g.Size),
 
             // TopRated
-            _ => orderedQuery.OrderByDescending(g => g.CriticRating)
+            _ => orderedQuery
         };
+}
 
         query = orderedQuery;
 
