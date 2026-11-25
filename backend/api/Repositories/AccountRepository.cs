@@ -53,20 +53,20 @@ namespace api.Repositories
                 };
             }
 
-            string? token = await _tokenService.CreateToken(gamer);
+            string? token = await _tokenService.CreateTokenAsync(gamer, cancellationToken);
 
             if (string.IsNullOrEmpty(token))
             {
                 return new LoggedInDto
                 {
-                    Errors = new List<string> {"Fieled to gnerate authentication token."}
+                    Errors = new List<string> { "Fieled to gnerate authentication token." }
                 };
             }
 
             return Mappers.ConvertGamerToLoggedInDto(gamer, token);
         }
 
-        public async Task<LoggedInDto?> LogInAsync(LogInDto userInput, CancellationToken cancellationToken)
+        public async Task<LoggedInDto?> LoginAsync(LogInDto userInput, CancellationToken cancellationToken)
         {
             Gamer? gamer = await _userManager.FindByNameAsync(userInput.Name);
 
@@ -88,41 +88,50 @@ namespace api.Repositories
                 };
             }
 
-            string? token = await _tokenService.CreateToken(gamer);
+            string? token = await _tokenService.CreateTokenAsync(gamer, cancellationToken);
 
             if (string.IsNullOrEmpty(token))
-                return null;
+                return new LoggedInDto
+                {
+                    Errors = new List<string> { "Fieled to gnerate authentication token." }
+                };
 
             return Mappers.ConvertGamerToLoggedInDto(gamer, token);
         }
 
         [Authorize]
-        public async Task<DeleteResult?> DeleteResultAsync(string userId, CancellationToken cancellationToken)
+        public async Task<DeleteResult?> DeleteResultAsync(string userIdHashed, CancellationToken cancellationToken)
         {
-            Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id.ToString() == userId).FirstOrDefaultAsync(cancellationToken);
+            ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
+
+            Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
 
             if (gamer is null) return null;
 
-            return await _collection.DeleteOneAsync<Gamer>(doc => doc.Id.ToString() == userId, cancellationToken);
+            return await _collection.DeleteOneAsync<Gamer>(doc => doc.Id == userId, cancellationToken);
         }
 
-        public async Task<LoggedInDto?> ReloadLoggedInAsync(string userId, string Token, CancellationToken cancellationToken)
+        public async Task<LoggedInDto?> ReloadLoggedInAsync(string userIdHashed, string Token, CancellationToken cancellationToken)
         {
-            Gamer? gamer = await _collection.Find(doc => doc.Id.ToString() == userId).FirstOrDefaultAsync(cancellationToken);
+            ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
+
+            Gamer? gamer = await _collection.Find(doc => doc.Id == userId).FirstOrDefaultAsync(cancellationToken);
 
             if (gamer is null) return null;
 
             return Mappers.ConvertGamerToLoggedInDto(gamer, Token);
         }
 
-        public async Task<UpdateResult?> UpdateLastActive(string userId, CancellationToken cancellationToken)
+        public async Task<UpdateResult?> UpdateLastActive(string userIdHashed, CancellationToken cancellationToken)
         {
-            if (userId is null) return null;
+            if (userIdHashed is null) return null;
 
             UpdateDefinition<Gamer> updateLastActive = Builders<Gamer>.Update
             .Set(user => user.LastActive, DateTime.UtcNow);
 
-            return await _collection.UpdateOneAsync(doc => doc.Id.ToString() == userId, updateLastActive, null, cancellationToken);
+            ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
+
+            return await _collection.UpdateOneAsync(doc => doc.Id == userId, updateLastActive, null, cancellationToken);
         }
     }
 }

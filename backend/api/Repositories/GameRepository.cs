@@ -45,18 +45,16 @@ public class GameRepository : IGameRepository
 
         if (games is null) return null;
 
-        if (!ObjectId.TryParse(gameId, out var objectId)) return null;
-
         string[]? imageUrls = photoType switch
         {
             PhotoType.Cover =>
-                await _photoService.AddCoverToDiskAsync(formFile, objectId),
+                await _photoService.AddCoverToDiskAsync(formFile, gameId),
 
             PhotoType.Banner =>
-                await _photoService.AddBannerToDiskAsync(formFile, objectId),
+                await _photoService.AddBannerToDiskAsync(formFile, gameId),
 
             PhotoType.Logo =>
-                await _photoService.AddLogoToDiskAsync(formFile, objectId),
+                await _photoService.AddLogoToDiskAsync(formFile, gameId),
 
             _ => null
         };
@@ -91,8 +89,6 @@ public class GameRepository : IGameRepository
 
     public async Task<List<GamePhoto>?> UploadScreenshotsAsync(IEnumerable<IFormFile> formFiles, PhotoType photoType, string gameId, CancellationToken cancellationToken)
     {
-        if (!ObjectId.TryParse(gameId, out var objectId)) return null;
-
         Games? games = await _collection.Find(doc => doc.Id == gameId).FirstOrDefaultAsync(cancellationToken);
 
         if (games is null) return null;
@@ -103,7 +99,7 @@ public class GameRepository : IGameRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            string[]? imageUrls = await _photoService.AddScreenshotsToDiskAsync(formFile, objectId);
+            string[]? imageUrls = await _photoService.AddScreenshotsToDiskAsync(formFile, gameId);
 
             if (imageUrls is null)
             {

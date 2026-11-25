@@ -6,6 +6,7 @@ namespace api.Models;
 [CollectionName("gamers")]
 public class Gamer : MongoIdentityUser<ObjectId>
 {
+    public string? IdentifireHash { get; init;}
     public DateOnly DateOfBirth { get; init; }
     public DateTime LastActive { get; init; }
     public string Gender { get; init; } = string.Empty;

@@ -29,7 +29,7 @@ public class PhotoService(
     /// <returns>ADD: array of filePaths. DELETE: boolean</returns>
 
     #region UserProfile
-    public async Task<string[]?> AddPhotoToDiskAsync(IFormFile formFile, Photo photo, ObjectId userId)
+    public async Task<string[]?> AddPhotoToDiskAsync(IFormFile formFile, Photo photo, string userId)
     {
         if (photo is not null)
         {
@@ -79,7 +79,7 @@ public class PhotoService(
     #endregion UserProfile
 
     #region Cover
-    public async Task<string[]?> AddCoverToDiskAsync(IFormFile formFile, ObjectId gameId)
+    public async Task<string[]?> AddCoverToDiskAsync(IFormFile formFile, string gameId)
     {
         if (formFile.Length > 0)
         {
@@ -108,7 +108,7 @@ public class PhotoService(
     #endregion Cover
 
     #region Banner
-    public async Task<string[]?> AddBannerToDiskAsync(IFormFile formFile, ObjectId gameId)
+    public async Task<string[]?> AddBannerToDiskAsync(IFormFile formFile, string gameId)
     {
         if (formFile.Length > 0)
         {
@@ -139,7 +139,7 @@ public class PhotoService(
     #endregion Banner
 
     #region Logo
-    public async Task<string[]?> AddLogoToDiskAsync(IFormFile formFile, ObjectId gameId)
+    public async Task<string[]?> AddLogoToDiskAsync(IFormFile formFile, string gameId)
     {
         if (formFile.Length > 0)
         {
@@ -169,7 +169,7 @@ public class PhotoService(
     #endregion Logo
 
     #region ScreenShots
-    public async Task<string[]?> AddScreenshotsToDiskAsync(IFormFile formFile, ObjectId gameId)
+    public async Task<string[]?> AddScreenshotsToDiskAsync(IFormFile formFile, string gameId)
     {
         if (formFile.Length > 0)
         {

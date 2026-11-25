@@ -13,11 +13,11 @@ public class UserController(IUserRepository userRepository) : BaseApiController
 
         if (userId is null) return Unauthorized("you are not login. Please login again");
 
-        UpdateResult? result = await userRepository.UpdateResultAsync(userId, userInput, cancellationToken);
+        UpdateResult? result = await userRepository.UpdateByIdAsync(userId, userInput, cancellationToken);
 
         return result is null || result.ModifiedCount == 0
         ? BadRequest("Update failed, Try again later")
-        : Ok(new Response( Message: "User has been updated successfully"));
+        : Ok(new Response(Message: "User has been updated successfully"));
     }
 
     [HttpPost("upload-photo")]
@@ -25,15 +25,15 @@ public class UserController(IUserRepository userRepository) : BaseApiController
     {
         if (file is null) return BadRequest("no file selcted for this request");
 
-        string? userId = User.GetUserId();
+        string? userIdHashed = User.GetUserId();
 
-        if (userId is null) return BadRequest("you are not logged in. please log in again");
+        if (userIdHashed is null) return BadRequest("you are not logged in. please log in again");
 
-        Photo? photo = await userRepository.UploadPhotoAsync(file, userId, cancellationToken);
+        Photo? photo = await userRepository.UploadPhotoAsync(file, userIdHashed, cancellationToken);
 
-        return photo is null 
-        ? BadRequest("Add photo failed.") 
-        : Ok (new Response ( Message: "photo upload successfully."));
+        return photo is null
+        ? BadRequest("Add photo failed.")
+        : Ok(new Response(Message: "photo upload successfully."));
     }
 
     [HttpDelete("delete-photo")]
@@ -47,6 +47,6 @@ public class UserController(IUserRepository userRepository) : BaseApiController
 
         return updateResult is null || !updateResult.IsModifiedCountAvailable
         ? BadRequest("photo deletion is failed.")
-        : Ok(new Response ( Message : "photo deleted successfully." ));
+        : Ok(new Response(Message: "photo deleted successfully."));
     }
 }

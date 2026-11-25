@@ -21,37 +21,39 @@ public class UserRepository : IUserRepository
         _logger = logger;
     }
 
-    public async Task<Gamer?> GetByIdAsync(string userId, CancellationToken cancellationToken)
+    public async Task<Gamer?> GetByIdAsync(ObjectId? userId, CancellationToken cancellationToken)
     {
-        Gamer? gamer = await _collection.Find(doc => doc.Id.ToString() == userId).SingleOrDefaultAsync(cancellationToken);
+        Gamer? gamer = await _collection.Find(doc => doc.Id == userId).SingleOrDefaultAsync(cancellationToken);
 
         if (gamer is null) return null;
 
         return gamer;
     }
-    public async Task<UpdateResult?> UpdateResultAsync(string userId, UserUpdateDto userInput, CancellationToken cancellationToken)
+    public async Task<UpdateResult?> UpdateByIdAsync(string userIdHashed, UserUpdateDto userInput, CancellationToken cancellationToken)
     {
-        Gamer gamer = await _collection.Find<Gamer>(doc => doc.Id.ToString() == userId).FirstOrDefaultAsync(cancellationToken);
+        ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
 
-        if (gamer is null) return null;
+        if (userId is null) return null;
 
         UpdateDefinition<Gamer> updateDef = Builders<Gamer>.Update
         .Set(user => user.UserName, userInput.Name.Trim())
         .Set(user => user.Country, userInput.Country.Trim())
         .Set(user => user.City, userInput.City.Trim());
 
-        return await _collection.UpdateOneAsync(user => user.Id.ToString() == userId, updateDef, null, cancellationToken);
+        return await _collection.UpdateOneAsync(user => user.Id == userId, updateDef, null, cancellationToken);
     }
 
-    public async Task<Photo?> UploadPhotoAsync(IFormFile file, string userId, CancellationToken cancellationToken)
+    public async Task<Photo?> UploadPhotoAsync(IFormFile file, string userIdHashed, CancellationToken cancellationToken)
     {
+        ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
+
+        if (userId is null) return null;
+
         Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
         if (gamer is null) return null;
 
-        if (!ObjectId.TryParse(userId, out var objectId)) return null;
-
-        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, gamer.Photo, objectId);
+        string[]? imageUrls = await _photoService.AddPhotoToDiskAsync(file, gamer.Photo, userIdHashed);
 
         if (imageUrls is not null)
         {
@@ -61,7 +63,7 @@ public class UserRepository : IUserRepository
 
             UpdateDefinition<Gamer> updateUser = Builders<Gamer>.Update.Set(doc => doc.Photo, newPhoto);
 
-            UpdateResult result = await _collection.UpdateOneAsync(doc => doc.Id.ToString() == userId, updateUser, null, cancellationToken);
+            UpdateResult result = await _collection.UpdateOneAsync(doc => doc.Id == userId, updateUser, null, cancellationToken);
 
             return result.ModifiedCount == 1 ? newPhoto : null;
         }
@@ -69,8 +71,12 @@ public class UserRepository : IUserRepository
         return null;
     }
 
-    public async Task<UpdateResult?> DeleltePhotoAsync(string userId, CancellationToken cancellationToken)
+    public async Task<UpdateResult?> DeleltePhotoAsync(string userIdHashed, CancellationToken cancellationToken)
     {
+        ObjectId? userId = await _tokenService.GetActualUserId(userIdHashed, cancellationToken);
+
+        if (userId is null) return null;
+
         Gamer? gamer = await GetByIdAsync(userId, cancellationToken);
 
         if (gamer is null) return null;
@@ -84,6 +90,6 @@ public class UserRepository : IUserRepository
 
         UpdateDefinition<Gamer> update = Builders<Gamer>.Update.Unset(gamer => gamer.Photo);
 
-        return await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id!.ToString() == userId, update, null, cancellationToken);
+        return await _collection.UpdateOneAsync<Gamer>(gamer => gamer.Id == userId, update, null, cancellationToken);
     }
 }

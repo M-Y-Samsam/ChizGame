@@ -5,18 +5,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace api.Controllers;
 
 [Authorize]
-public class MemberController(IMemberRepository memberRepository) : BaseApiController
+public class MemberController(IMemberRepository memberRepository, ITokenService tokenService) : BaseApiController
 
 {
     [HttpGet("get-all")]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetAllGamers([FromQuery] MemberParams memberParams, CancellationToken cancellationToken)
     {
-        var userId = User.GetUserId();
+        var userIdHashed = User.GetUserId();
 
-        memberParams.UserId = userId;
+        if (userIdHashed is null)
+            return Unauthorized("You are not login. Please login again");
+
+        ObjectId? userId = await tokenService.GetActualUserId(userIdHashed, cancellationToken);
 
         if (userId is null)
             return Unauthorized("You are not login. Please login again");
+        
+        memberParams.UserId = userId;
 
         PagedList<Gamer> PagedGamers = await memberRepository.GetGamersAsync(memberParams, cancellationToken);
 

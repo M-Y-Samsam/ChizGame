@@ -2,7 +2,7 @@ namespace api.Helpers;
 
 public class MemberParams : PaginationParams
 {
-    public string? UserId { get; set; }
+    public ObjectId? UserId { get; set; }
     [MaxLength(30)]
     public string? OrderBy { get; set; } = "LastActive";
     [MaxLength(100)]

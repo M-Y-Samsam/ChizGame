@@ -58,7 +58,7 @@ public class MemberRepository : IMemberRepository
         }
 
         query = query.Where(u => !(u.NormalizedUserName.Equals("ADMIN") || u.NormalizedUserName.Equals("MODERATOR")));
-        query = query.Where(u => u.Id.ToString() != memberParams.UserId);
+        query = query.Where(u => u.Id != memberParams.UserId);
         query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
     
         return query;
