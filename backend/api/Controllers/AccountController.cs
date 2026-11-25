@@ -26,7 +26,7 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
     [HttpPost("Login")]
     public async Task<ActionResult<LoggedInDto>> LogIn(LogInDto userInput, CancellationToken cancellationToken)
     {
-        LoggedInDto? loggedInDto = await accountRepository.LogInAsync(userInput, cancellationToken);
+        LoggedInDto? loggedInDto = await accountRepository.LoginAsync(userInput, cancellationToken);
 
         if (loggedInDto!.IsWrongCred)
             return BadRequest("Name or Password is wrong!");
@@ -66,7 +66,7 @@ public class AccountController(IAccountRepository accountRepository) : BaseApiCo
 
         // get loggedInDto
         LoggedInDto? loggedInDto =
-        await accountRepository.ReloadLoggedInAsync(userId, token, cancellationToken);
+            await accountRepository.ReloadLoggedInAsync(userId, token, cancellationToken);
 
         return loggedInDto is null ? Unauthorized("User is logged out or unauthorized. Login again") : loggedInDto;
     }
